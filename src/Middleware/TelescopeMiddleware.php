@@ -18,6 +18,7 @@ use Guandeng\Telescope\TelescopeContext;
 use Hyperf\Collection\Arr;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Stringable\Str;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -48,6 +49,7 @@ class TelescopeMiddleware implements MiddlewareInterface
             TelescopeContext::setBatchId($batchId);
             // response 属于最后处理
             $response = $handler->handle($request);
+            $this->requestHandled($request, $response);
             if ($batchId) {
                 $response = $response->withHeader('batch-id', $batchId);
             }
@@ -65,11 +67,7 @@ class TelescopeMiddleware implements MiddlewareInterface
          */
         $psr7Request = $request;
         $psr7Response = $response;
-        $startTime = $psr7Request->getServerParams()['request_time'];
-        var_dump($startTime);
-        var_dump(microtime(true));
-        var_dump(floor((microtime(true) - $startTime) * 1000));
-
+        $startTime = $psr7Request->getServerParams()['request_time_float'];
         if ($this->incomingRequest($psr7Request)) {
             /** @var Dispatched $dispatched */
             $dispatched = $psr7Request->getAttribute(Dispatched::class);

@@ -81,11 +81,7 @@ class RequestHandledListener implements ListenerInterface
         $psr7Request = $event->request;
         $psr7Response = $event->response;
         $middlewares = $event->middlewares ?? '';
-        $startTime = $psr7Request->getServerParams()['request_time'];
-        var_dump(11111111, $startTime);
-        var_dump(microtime(true));
-        var_dump(floor((microtime(true) - $startTime) * 1000));
-
+        $startTime = $psr7Request->getServerParams()['request_time_float'];
         if ($this->incomingRequest($psr7Request)) {
             /** @var Dispatched $dispatched */
             $dispatched = $psr7Request->getAttribute(Dispatched::class);
