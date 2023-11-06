@@ -1,0 +1,40 @@
+{
+    "name": "guandeng/hyperf-telescope",
+    "description": "An elegant debug assistant for the hyperf framework.",
+    "keywords": [
+        "swoole",
+        "hyperf",
+        "debugging"
+    ],
+    "license": "MIT",
+    "require": {
+        "php": ">=8.0",
+        "hyperf/framework": "^3.0.0",
+        "hyperf/view": "*",
+        "hyperf/support": "*",
+        "hyperf/event": "*",
+        "hyperf/view-engine": "*",
+        "ramsey/uuid": "^4.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "Guandeng\\Telescope\\": "src/"
+        }
+    },
+    "suggest": {
+        "ext-swoole": "Required to use swoole engine.",
+        "hyperf/dispatcher": "Required to use BootApplication event.",
+        "hyperf/command": "Required to use Command annotation.",
+        "hyperf/database": "Required to use Database annotation.",
+        "hyperf/db-connection": "Required to use db-connection annotation.",
+        "hyperf/event": "Required to use Event annotation.",
+        "hyperf/http-message": "Required to use http-message annotation."
+    },
+    "extra": {
+        "hyperf": {
+            "config": "Guandeng\\Telescope\\ConfigProvider"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
