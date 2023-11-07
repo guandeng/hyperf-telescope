@@ -2,12 +2,11 @@
 hyperf版本的望远镜
 
 ### 功能点
-- [x] 开箱即用
 - [x] 记录request请求
 - [x] 记录异常错误
 - [x] 记录sql语句
 - [x] 记录grpc service请求
-- [ ] 记录redis
+- [x] 记录redis
 - [ ] 记录命令
 - [ ] 记录event
 - [ ] 记录http client

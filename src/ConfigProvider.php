@@ -36,6 +36,7 @@ class ConfigProvider
             ],
             'aspects' => [
                 \Guandeng\Telescope\Aspect\GrpcClientAspect::class,
+                \Guandeng\Telescope\Aspect\RedisAspect::class,
             ],
             'view' => [
                 'engine' => \Guandeng\Telescope\TemplateEngine::class,
@@ -67,13 +68,6 @@ class ConfigProvider
                 ],
             ],
             'publish' => [
-                [
-                    'id' => 'telescope',
-                    'description' => 'hyperf telescope', // 描述
-                    // 建议默认配置放在 publish 文件夹中，文件命名和组件名称相同
-                    'source' => __DIR__ . '/../migrations/2020_08_03_064816_telescope_entries.php',  // 对应的配置文件路径
-                    'destination' => BASE_PATH . '/migrations/2020_08_03_064816_telescope_entries.php', // 复制为这个路径下的该文件
-                ],
                 [
                     'id' => 'config',
                     'description' => 'The configuration file for hyperf telescope',

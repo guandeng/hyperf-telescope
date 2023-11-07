@@ -108,6 +108,7 @@ class RequestHandledListener implements ListenerInterface
 
             $this->queryRecord($batchId);
             $this->exceptionRecord($batchId);
+            $this->redisRecord($batchId);
         }
     }
 
@@ -162,6 +163,22 @@ class RequestHandledListener implements ListenerInterface
             ]);
             $subBatchId = (string) TelescopeContext::getSubBatchId();
             $entry->batchId($batchId)->subBatchId($subBatchId)->type(EntryType::EXCEPTION)->user();
+            $entry->create();
+        }
+    }
+
+    protected function redisRecord(string $batchId = ''): void
+    {
+        $arr = Context::get('redis_record', []);
+        var_dump($arr);
+        foreach ($arr as $command) {
+            $entry = IncomingEntry::make([
+                'command' => '[' . $this->getAppName() . '] ' . $command,
+                'time' => 0,
+                'hash' => md5($command),
+            ]);
+            $subBatchId = (string) TelescopeContext::getSubBatchId();
+            $entry->batchId($batchId)->subBatchId($subBatchId)->type(EntryType::REDIS)->user();
             $entry->create();
         }
     }
