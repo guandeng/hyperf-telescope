@@ -35,7 +35,7 @@ class TelescopeMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (env('TELESCOPE_ENABLE', false) === false) {
+        if (env('TELESCOPE_ENABLED', false) === false) {
             return $handler->handle($request);
         }
         try {
@@ -180,6 +180,10 @@ class TelescopeMiddleware implements MiddlewareInterface
             ) {
                 return json_decode($content, true);
             }
+        }
+        if (is_string($content) && Str::contains($response->getHeaderLine('content-type'), 'application/grpc') !== false) {
+            // to do for grpc
+            return 'warning:to do for grpc repsonse';
         }
         return $content;
     }

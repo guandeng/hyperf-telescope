@@ -50,7 +50,7 @@ return [
 ### 提供配置项
 ```
 # 修改.env
-TELESCOPE_ENABLE=true #默认关闭
+TELESCOPE_ENABLED=true #默认关闭
 ```
 
 ## 效果图
