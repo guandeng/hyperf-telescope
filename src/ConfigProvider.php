@@ -20,7 +20,7 @@ class ConfigProvider
 {
     public function __invoke(): array
     {
-        if (env('TELESCOPE_ENABLED', false) === false) {
+        if (env('TELESCOPE_ENABLE', false) === false) {
             return [];
         }
 

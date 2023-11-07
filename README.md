@@ -50,9 +50,7 @@ return [
 ### 提供配置项
 ```
 # 修改.env
-TELESCOPE_ENABLED=true #默认关闭
-TELESCOPE_TIMEZONE=Asia/Shanghai #默认php时区
-TELESCOPE_QUERY_SLOW=50 #单位毫秒
+TELESCOPE_ENABLE=true #默认关闭
 ```
 
 ## 效果图

@@ -35,7 +35,7 @@ class TelescopeMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (env('TELESCOPE_ENABLED', false) === false) {
+        if (env('TELESCOPE_ENABLE', false) === false) {
             return $handler->handle($request);
         }
         try {

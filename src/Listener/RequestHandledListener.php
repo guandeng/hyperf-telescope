@@ -44,7 +44,7 @@ class RequestHandledListener implements ListenerInterface
 
     public function process(object $event): void
     {
-        if (env('TELESCOPE_ENABLED', false) === false) {
+        if (env('TELESCOPE_ENABLE', false) === false) {
             return;
         }
         match ($event::class) {
