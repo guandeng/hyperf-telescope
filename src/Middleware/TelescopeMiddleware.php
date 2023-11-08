@@ -18,6 +18,7 @@ use Guandeng\Telescope\TelescopeContext;
 use Hyperf\Collection\Arr;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Stringable\Str;
 use Psr\Http\Message\ResponseInterface;
@@ -117,17 +118,19 @@ class TelescopeMiddleware implements MiddlewareInterface
         $arr = Context::get('query_record', []);
         $optionSlow = env('TELESCOPE_QUERY_SLOW', 500);
         foreach ($arr as [$event, $sql]) {
-            $entry = IncomingEntry::make([
-                'connection' => $event->connectionName,
-                'bindings' => [],
-                'sql' => '[' . $this->getAppName() . '] ' . $sql,
-                'time' => number_format($event->time, 2, '.', ''),
-                'slow' => $event->time >= $optionSlow,
-                'hash' => md5($sql),
-            ]);
-            $subBatchId = (string) TelescopeContext::getSubBatchId();
-            $entry->batchId($batchId)->subBatchId($subBatchId)->type(EntryType::QUERY)->user();
-            $entry->create();
+            Coroutine::create(function () use ($batchId, $event, $sql, $optionSlow) {
+                $entry = IncomingEntry::make([
+                    'connection' => $event->connectionName,
+                    'bindings' => [],
+                    'sql' => '[' . $this->getAppName() . '] ' . $sql,
+                    'time' => number_format($event->time, 2, '.', ''),
+                    'slow' => $event->time >= $optionSlow,
+                    'hash' => md5($sql),
+                ]);
+                $subBatchId = (string) TelescopeContext::getSubBatchId();
+                $entry->batchId($batchId)->subBatchId($subBatchId)->type(EntryType::QUERY)->user();
+                $entry->create();
+            });
         }
     }
 
@@ -158,14 +161,16 @@ class TelescopeMiddleware implements MiddlewareInterface
     {
         $arr = Context::get('redis_record', []);
         foreach ($arr as [$time,$command]) {
-            $entry = IncomingEntry::make([
-                'command' => '[' . $this->getAppName() . '] ' . $command,
-                'time' => $time,
-                'hash' => md5($command),
-            ]);
-            $subBatchId = (string) TelescopeContext::getSubBatchId();
-            $entry->batchId($batchId)->subBatchId($subBatchId)->type(EntryType::REDIS)->user();
-            $entry->create();
+            Coroutine::create(function () use ($batchId, $time, $command) {
+                $entry = IncomingEntry::make([
+                    'command' => '[' . $this->getAppName() . '] ' . $command,
+                    'time' => $time,
+                    'hash' => md5($command),
+                ]);
+                $subBatchId = (string) TelescopeContext::getSubBatchId();
+                $entry->batchId($batchId)->subBatchId($subBatchId)->type(EntryType::REDIS)->user();
+                $entry->create();
+            });
         }
     }
 
@@ -173,16 +178,18 @@ class TelescopeMiddleware implements MiddlewareInterface
     {
         $arr = Context::get('log_record', []);
         foreach ($arr as [$level,$message,$context]) {
-            $entry = IncomingEntry::make([
-                'message' => '[' . $this->getAppName() . '] ' . $message,
-                'context' => Arr::except($context, ['telescope']),
-                'level' => $level,
-                'time' => 0,
-                'hash' => md5($message),
-            ]);
-            $subBatchId = (string) TelescopeContext::getSubBatchId();
-            $entry->batchId($batchId)->subBatchId($subBatchId)->type(EntryType::LOG)->user();
-            $entry->create();
+            Coroutine::create(function () use ($batchId, $level, $message, $context) {
+                $entry = IncomingEntry::make([
+                    'message' => '[' . $this->getAppName() . '] ' . $message,
+                    'context' => Arr::except($context, ['telescope']),
+                    'level' => $level,
+                    'time' => 0,
+                    'hash' => md5($message),
+                ]);
+                $subBatchId = (string) TelescopeContext::getSubBatchId();
+                $entry->batchId($batchId)->subBatchId($subBatchId)->type(EntryType::LOG)->user();
+                $entry->create();
+            });
         }
     }
 

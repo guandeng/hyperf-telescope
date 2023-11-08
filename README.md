@@ -44,14 +44,13 @@ return [
 
 ```
 
+# 修改.env
+```
+TELESCOPE_ENABLED=true #默认关闭
+
 ### 访问地址
 `http://127.0.0.1:9501/telescope/requests`
 
-### 提供配置项
-```
-# 修改.env
-TELESCOPE_ENABLED=true #默认关闭
-```
 
-## 效果图
+```
 <img src="./preview.jpg">
