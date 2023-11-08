@@ -17,6 +17,7 @@ use Hyperf\Context\Context;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
+use Hyperf\Stringable\Str;
 use Monolog\DateTimeImmutable;
 use Monolog\Logger;
 use UnitEnum;
@@ -42,6 +43,9 @@ class LogAspect extends AbstractAspect
             $datetime = $proceedingJoinPoint->arguments['keys']['datetime'];
 
             if (isset($context['no_sentry_aspect']) && $context['no_sentry_aspect'] === true) {
+                return;
+            }
+            if (Str::contains($message, 'telescope')) {
                 return;
             }
             $arr = Context::get('log_record', []);

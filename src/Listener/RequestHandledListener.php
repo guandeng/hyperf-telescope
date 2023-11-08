@@ -171,10 +171,10 @@ class RequestHandledListener implements ListenerInterface
     protected function redisRecord(string $batchId = ''): void
     {
         $arr = Context::get('redis_record', []);
-        foreach ($arr as $command) {
+        foreach ($arr as [$time,$command]) {
             $entry = IncomingEntry::make([
                 'command' => '[' . $this->getAppName() . '] ' . $command,
-                'time' => 0,
+                'time' => $time,
                 'hash' => md5($command),
             ]);
             $subBatchId = (string) TelescopeContext::getSubBatchId();
