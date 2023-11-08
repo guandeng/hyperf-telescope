@@ -32,7 +32,9 @@ use function Hyperf\Support\env;
 
 class TelescopeMiddleware implements MiddlewareInterface
 {
-    public function __construct(protected ConfigInterface $config) {}
+    public function __construct(protected ConfigInterface $config)
+    {
+    }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -97,6 +99,7 @@ class TelescopeMiddleware implements MiddlewareInterface
             $this->exceptionRecord($batchId);
             $this->redisRecord($batchId);
             $this->loggerRecord($batchId);
+            $this->eventRecord($batchId);
         }
     }
 
@@ -154,6 +157,24 @@ class TelescopeMiddleware implements MiddlewareInterface
             $subBatchId = (string) TelescopeContext::getSubBatchId();
             $entry->batchId($batchId)->subBatchId($subBatchId)->type(EntryType::EXCEPTION)->user();
             $entry->create();
+        }
+    }
+
+    protected function eventRecord(string $batchId = ''): void
+    {
+        $arr = Context::get('event_record', []);
+        foreach ($arr as [$listenName,$eventName,$payload]) {
+            Coroutine::create(function () use ($batchId, $listenName, $eventName, $payload) {
+                $entry = IncomingEntry::make([
+                    'name' => '[' . $this->getAppName() . '] ' . $eventName,
+                    'listeners' => $listenName,
+                    'payload' => $payload,
+                    'hash' => md5($eventName),
+                ]);
+                $subBatchId = (string) TelescopeContext::getSubBatchId();
+                $entry->batchId($batchId)->subBatchId($subBatchId)->type(EntryType::EVENT)->user();
+                $entry->create();
+            });
         }
     }
 

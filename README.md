@@ -41,16 +41,22 @@ return [
     ],
 ];
 
-
 ```
 
 # 修改.env
 ```
-TELESCOPE_ENABLED=true #默认关闭
+DB_TELESCOPE_CONNECTION=mysql
+DB_TELESCOPE_HOST=127.0.0.1
+DB_TELESCOPE_PORT=3306
+DB_TELESCOPE_DATABASE=
+DB_TELESCOPE_USERNAME=
+DB_TELESCOPE_PASSWORD=
 
+TELESCOPE_ENABLED=true #默认关闭
+```
 ### 访问地址
+
 `http://127.0.0.1:9501/telescope/requests`
 
 
-```
 <img src="./preview.jpg">
