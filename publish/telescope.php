@@ -15,7 +15,7 @@ return [
     'app' => [
         'name' => env('APP_NAME', 'skeleton'),
     ],
-    'enable' => env('TELESCOPE_ENABLED', false),
+    'enabled' => env('TELESCOPE_ENABLED', false),
     'timezone' => env('TELESCOPE_TIMEZONE', 'Asia/Shanghai'),
     'query_slow' => env('TELESCOPE_QUERY_SLOW', 50),
 ];

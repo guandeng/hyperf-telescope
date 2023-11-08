@@ -13,7 +13,7 @@ hyperf版本的望远镜
 - [ ] 记录http client
 
 ### 安装组件
-`composer require guandeng/hyperf-telescope`
+`composer require guandeng/hyperf-telescope:dev-main`
 
 ### 发布配置
 `php bin/hyperf.php vendor:publish guandeng/hyperf-telescope`

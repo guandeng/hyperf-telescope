@@ -18,7 +18,6 @@ use Hyperf\Contract\ContainerInterface;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Stringable\Str;
-use Monolog\DateTimeImmutable;
 use Monolog\Logger;
 use UnitEnum;
 
@@ -39,13 +38,16 @@ class LogAspect extends AbstractAspect
             $level = $level instanceof UnitEnum ? (int) $level->value : (int) $level;
             $message = $proceedingJoinPoint->arguments['keys']['message'];
             $context = $proceedingJoinPoint->arguments['keys']['context'];
-            /** @var null|DateTimeImmutable $datetime */
-            $datetime = $proceedingJoinPoint->arguments['keys']['datetime'];
-
             if (isset($context['no_sentry_aspect']) && $context['no_sentry_aspect'] === true) {
                 return;
             }
+
             if (Str::contains($message, 'telescope')) {
+                return;
+            }
+            $originalInstance = $proceedingJoinPoint->getInstance();
+            $name = $originalInstance->getName();
+            if ($name == 'sql') {
                 return;
             }
             $arr = Context::get('log_record', []);

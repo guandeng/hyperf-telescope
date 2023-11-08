@@ -88,8 +88,8 @@ class ConfigProvider
                     'collation' => env('DB_TELESCOPE_COLLATION', 'utf8_unicode_ci'),
                     'prefix' => env('DB_TELESCOPE_PREFIX', ''),
                     'pool' => [
-                        'min_connections' => 1,
-                        'max_connections' => 10,
+                        'min_connections' => env('TELESCOPE_MIN_CONNECTIONS', 1),
+                        'max_connections' => env('TELESCOPE_MAX_CONNECTIONS', 128),
                         'connect_timeout' => 10.0,
                         'wait_timeout' => 3.0,
                         'heartbeat' => -1,
