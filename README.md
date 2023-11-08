@@ -7,6 +7,7 @@ hyperf版本的望远镜
 - [x] 记录sql语句
 - [x] 记录grpc service请求
 - [x] 记录redis
+- [x] 记录log
 - [ ] 记录命令
 - [ ] 记录event
 - [ ] 记录http client

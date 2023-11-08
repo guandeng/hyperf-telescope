@@ -109,6 +109,7 @@ class RequestHandledListener implements ListenerInterface
             $this->queryRecord($batchId);
             $this->exceptionRecord($batchId);
             $this->redisRecord($batchId);
+            $this->loggerRecord($batchId);
         }
     }
 
@@ -170,7 +171,6 @@ class RequestHandledListener implements ListenerInterface
     protected function redisRecord(string $batchId = ''): void
     {
         $arr = Context::get('redis_record', []);
-        var_dump($arr);
         foreach ($arr as $command) {
             $entry = IncomingEntry::make([
                 'command' => '[' . $this->getAppName() . '] ' . $command,
@@ -179,6 +179,23 @@ class RequestHandledListener implements ListenerInterface
             ]);
             $subBatchId = (string) TelescopeContext::getSubBatchId();
             $entry->batchId($batchId)->subBatchId($subBatchId)->type(EntryType::REDIS)->user();
+            $entry->create();
+        }
+    }
+
+    protected function loggerRecord(string $batchId = ''): void
+    {
+        $arr = Context::get('log_record', []);
+        foreach ($arr as [$level,$message,$context]) {
+            $entry = IncomingEntry::make([
+                'message' => '[' . $this->getAppName() . '] ' . $message,
+                'context' => Arr::except($context, ['telescope']),
+                'level' => $level,
+                'time' => 0,
+                'hash' => md5($message),
+            ]);
+            $subBatchId = (string) TelescopeContext::getSubBatchId();
+            $entry->batchId($batchId)->subBatchId($subBatchId)->type(EntryType::LOG)->user();
             $entry->create();
         }
     }
