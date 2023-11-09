@@ -9,12 +9,16 @@
     "license": "MIT",
     "require": {
         "php": ">=8.0",
-        "hyperf/framework": "^3.0.0",
-        "hyperf/view": "*",
-        "hyperf/support": "*",
-        "hyperf/event": "*",
-        "hyperf/view-engine": "*",
+        "hyperf/framework": "~3.0.0",
+        "hyperf/view": "~3.0.0",
+        "hyperf/support": "~3.0.0",
+        "hyperf/event": "~3.0.0",
+        "hyperf/view-engine": "~3.0.0",
         "ramsey/uuid": "^4.7"
+    },
+    "require-dev": {
+        "hyperf/http-server": "~3.0.0",
+        "swow/psr7-plus": "^1.1"
     },
     "autoload": {
         "psr-4": {

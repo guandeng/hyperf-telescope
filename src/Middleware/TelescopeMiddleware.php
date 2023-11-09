@@ -25,9 +25,11 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use RuntimeException;
 use Throwable;
 
 use function Hyperf\Collection\collect;
+use function Hyperf\Coroutine\defer;
 use function Hyperf\Support\env;
 
 class TelescopeMiddleware implements MiddlewareInterface
@@ -41,33 +43,35 @@ class TelescopeMiddleware implements MiddlewareInterface
         if (env('TELESCOPE_ENABLED', false) === false) {
             return $handler->handle($request);
         }
-        try {
-            $batchId = $request->getHeaderLine('batch-id');
-            if (!$batchId) {
-                $batchId = Str::orderedUuid()->toString();
-            } else {
-                $subBatchId = Str::orderedUuid()->toString();
-                TelescopeContext::setSubBatchId($subBatchId);
-            }
-            TelescopeContext::setBatchId($batchId);
-            // response 属于最后处理
-            $response = $handler->handle($request);
-            $this->requestHandled($request, $response);
-            if ($batchId) {
-                $response = $response->withHeader('batch-id', $batchId);
-            }
-        } catch (Throwable $exception) {
-            throw $exception;
-        } finally {
+        
+        $batchId = $request->getHeaderLine('batch-id');
+        if (!$batchId) {
+            $batchId = Str::orderedUuid()->toString();
+        } else {
+            $subBatchId = Str::orderedUuid()->toString();
+            TelescopeContext::setSubBatchId($subBatchId);
         }
+        TelescopeContext::setBatchId($batchId);
+
+        // response 属于最后处理
+        $response = $handler->handle($request);
+
+        if ($batchId) {
+            $response = $response->withHeader('batch-id', $batchId);
+        }
+
+        defer(fn() =>$this->requestHandled($request, $response));
+            
         return $response;
     }
 
+    /**
+     * 
+     * @param ServerRequestInterface $request 
+     * @param \Psr\Http\Message\ResponseInterface $response 
+     */
     public function requestHandled($request, $response)
     {
-        /**
-         * @var \Hyperf\HttpMessage\Server\Request $psr7Request
-         */
         $psr7Request = $request;
         $psr7Response = $response;
         $startTime = $psr7Request->getServerParams()['request_time_float'];

@@ -22,10 +22,12 @@ use Hyperf\Coroutine\Coroutine;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\HttpServer\Event\RequestHandled;
 use Hyperf\HttpServer\Event\RequestReceived;
+use Hyperf\HttpServer\Event\RequestTerminated;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Stringable\Str;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 use Swow\Psr7\Message\ResponsePlusInterface;
 
 use function Hyperf\Collection\collect;
@@ -41,7 +43,7 @@ class RequestHandledListener implements ListenerInterface
     {
         return [
             RequestReceived::class,
-            RequestHandled::class,
+            RequestTerminated::class,
         ];
     }
 
@@ -52,7 +54,7 @@ class RequestHandledListener implements ListenerInterface
         }
         match ($event::class) {
             RequestReceived::class => $this->requestReceived($event),
-            RequestHandled::class => $this->requestHandled($event),
+            RequestTerminated::class => $this->requestHandled($event),
             default => '', // fix phpstan error
         };
     }
@@ -73,6 +75,10 @@ class RequestHandledListener implements ListenerInterface
         TelescopeContext::setBatchId($batchId);
     }
 
+    /**
+     * 
+     * @param RequestTerminated $event 
+     */
     public function requestHandled($event)
     {
         if ($event->response instanceof ResponsePlusInterface && $batchId = TelescopeContext::getBatchId()) {
@@ -83,7 +89,7 @@ class RequestHandledListener implements ListenerInterface
          */
         $psr7Request = $event->request;
         $psr7Response = $event->response;
-        $middlewares = $event->middlewares ?? '';
+        $middlewares = $this->config->get('middlewares.'.$event->server, []);
         $startTime = $psr7Request->getServerParams()['request_time_float'];
         if ($this->incomingRequest($psr7Request)) {
             /** @var Dispatched $dispatched */
