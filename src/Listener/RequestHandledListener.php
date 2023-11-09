@@ -64,7 +64,7 @@ class RequestHandledListener implements ListenerInterface
          */
         $request = $event->request;
         $batchId = $request->getHeaderLine('batch-id');
-        if (! $batchId) {
+        if (!$batchId) {
             $batchId = Str::orderedUuid()->toString();
         } else {
             $subBatchId = Str::orderedUuid()->toString();
@@ -114,6 +114,7 @@ class RequestHandledListener implements ListenerInterface
             $this->redisRecord($batchId);
             $this->loggerRecord($batchId);
             $this->eventRecord($batchId);
+            $this->commandRecord($batchId);
         }
     }
 
@@ -209,6 +210,25 @@ class RequestHandledListener implements ListenerInterface
         }
     }
 
+    protected function commandRecord(string $batchId = ''): void
+    {
+        $arr = Context::get('command_record', []);
+        foreach ($arr as [$command, $arguments, $options, $exit_code]) {
+            var_dump($command, $arguments, $options);
+            Coroutine::create(function () use ($batchId, $command, $arguments, $options, $exit_code) {
+                $entry = IncomingEntry::make([
+                    'command' => '[' . $this->getAppName() . '] ' . $command,
+                    'exit_code' => $exit_code,
+                    'arguments' => $arguments,
+                    'options' => $options,
+                ]);
+                $subBatchId = (string) TelescopeContext::getSubBatchId();
+                $entry->batchId($batchId)->subBatchId($subBatchId)->type(EntryType::COMMAND)->user();
+                $entry->create();
+            });
+        }
+    }
+
     protected function loggerRecord(string $batchId = ''): void
     {
         $arr = Context::get('log_record', []);
@@ -245,7 +265,7 @@ class RequestHandledListener implements ListenerInterface
     protected function response(ResponseInterface $response)
     {
         $content = $response->getBody()->getContents();
-        if (! $this->contentWithinLimits($content)) {
+        if (!$this->contentWithinLimits($content)) {
             return 'Purged By Hyperf Telescope';
         }
 

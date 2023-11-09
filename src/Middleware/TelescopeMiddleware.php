@@ -43,7 +43,7 @@ class TelescopeMiddleware implements MiddlewareInterface
         }
         try {
             $batchId = $request->getHeaderLine('batch-id');
-            if (! $batchId) {
+            if (!$batchId) {
                 $batchId = Str::orderedUuid()->toString();
             } else {
                 $subBatchId = Str::orderedUuid()->toString();
@@ -100,6 +100,7 @@ class TelescopeMiddleware implements MiddlewareInterface
             $this->redisRecord($batchId);
             $this->loggerRecord($batchId);
             $this->eventRecord($batchId);
+            $this->commandRecord($batchId);
         }
     }
 
@@ -195,6 +196,23 @@ class TelescopeMiddleware implements MiddlewareInterface
         }
     }
 
+    protected function commandRecord(string $batchId = ''): void
+    {
+        $arr = Context::get('command_record', []);
+        foreach ($arr as [$command, $arguments, $options, $exit_code]) {
+            Coroutine::create(function () use ($batchId, $command, $arguments, $options, $exit_code) {
+                $entry = IncomingEntry::make([
+                    'name' => '[' . $this->getAppName() . '] ' . $command,
+                    'exit_code' => $exit_code,
+                    'options' => $options,
+                ]);
+                $subBatchId = (string) TelescopeContext::getSubBatchId();
+                $entry->batchId($batchId)->subBatchId($subBatchId)->type(EntryType::COMMAND)->user();
+                $entry->create();
+            });
+        }
+    }
+
     protected function loggerRecord(string $batchId = ''): void
     {
         $arr = Context::get('log_record', []);
@@ -231,7 +249,7 @@ class TelescopeMiddleware implements MiddlewareInterface
     protected function response(ResponseInterface $response)
     {
         $content = $response->getBody()->getContents();
-        if (! $this->contentWithinLimits($content)) {
+        if (!$this->contentWithinLimits($content)) {
             return 'Purged By Hyperf Telescope';
         }
 

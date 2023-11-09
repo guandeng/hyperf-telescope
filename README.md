@@ -8,8 +8,8 @@ hyperf版本的望远镜
 - [x] 记录grpc service请求
 - [x] 记录redis
 - [x] 记录log
-- [ ] 记录命令
-- [ ] 记录event
+- [x] 记录command
+- [x] 记录event
 - [ ] 记录http client
 
 ### 安装组件
@@ -59,4 +59,6 @@ TELESCOPE_ENABLED=true #默认关闭
 `http://127.0.0.1:9501/telescope/requests`
 
 
-<img src="./preview.jpg">
+<img src="./requests.jpg">
+<img src="./grpc.jpg">
+<img src="./exception.jpg">

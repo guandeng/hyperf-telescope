@@ -39,6 +39,7 @@ class ConfigProvider
                 \Guandeng\Telescope\Aspect\RedisAspect::class,
                 \Guandeng\Telescope\Aspect\LogAspect::class,
                 \Guandeng\Telescope\Aspect\EventAspect::class,
+                \Guandeng\Telescope\Aspect\CommandAspect::class,
             ],
             'view' => [
                 'engine' => \Guandeng\Telescope\TemplateEngine::class,
