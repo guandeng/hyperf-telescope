@@ -13,6 +13,7 @@ namespace Guandeng\Telescope\Middleware;
 
 use Guandeng\Telescope\EntryType;
 use Guandeng\Telescope\IncomingEntry;
+use Guandeng\Telescope\Telescope;
 use Guandeng\Telescope\TelescopeContext;
 use Hyperf\Collection\Arr;
 use Hyperf\Context\Context;
@@ -268,24 +269,37 @@ class TelescopeMiddleware implements MiddlewareInterface
 
     protected function response(ResponseInterface $response)
     {
-        $content = $response->getBody()->getContents();
-        if (! $this->contentWithinLimits($content)) {
-            return 'Purged By Hyperf Telescope';
+        $stream = $response->getBody();
+        if ($stream->isSeekable()) {
+            $stream->rewind();
         }
-
-        if (is_string($content) && Str::contains($response->getHeaderLine('content-type'), 'application/json') !== false) {
+        $content = $stream->getContents();
+        if (is_string($content)) {
+            if (! $this->contentWithinLimits($content)) {
+                return 'Purged By Hyperf Telescope';
+            }
             if (
                 is_array(json_decode($content, true))
                 && json_last_error() === JSON_ERROR_NONE
             ) {
-                return json_decode($content, true);
+                return $this->contentWithinLimits($content)
+                ? $this->hideParameters(json_decode($content, true), Telescope::$hiddenResponseParameters)
+                : 'Purged By Telescope';
+            }
+            if (Str::startsWith(strtolower($response->getHeaderLine('content-type') ?? ''), 'text/plain')) {
+                return $this->contentWithinLimits($content) ? $content : 'Purged By Hyperf Telescope';
+            }
+            if (Str::contains($response->getHeaderLine('content-type'), 'application/grpc') !== false) {
+                // to do for grpc
+                return 'Purged By Hyperf Telescope';
             }
         }
-        if (is_string($content) && Str::contains($response->getHeaderLine('content-type'), 'application/grpc') !== false) {
-            // to do for grpc
-            return 'warning:to do for grpc repsonse';
+
+        if (empty($content)) {
+            return 'Empty Response';
         }
-        return $content;
+
+        return 'HTML Response';
     }
 
     protected function getContext($exception)
@@ -306,5 +320,23 @@ class TelescopeMiddleware implements MiddlewareInterface
     {
         $limit = 64;
         return mb_strlen($content) / 1000 <= $limit;
+    }
+
+    /**
+     * Hide the given parameters.
+     *
+     * @param array $data
+     * @param array $hidden
+     * @return mixed
+     */
+    protected function hideParameters($data, $hidden)
+    {
+        foreach ($hidden as $parameter) {
+            if (Arr::get($data, $parameter)) {
+                Arr::set($data, $parameter, '********');
+            }
+        }
+
+        return $data;
     }
 }
