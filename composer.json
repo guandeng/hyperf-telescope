@@ -22,7 +22,7 @@
     "require-dev": {
         "hyperf/http-server": "~3.0.0",
         "swow/psr7-plus": "^1.1",
-        "huangdijia/php-coding-standard": "^2.0",
+        "huangdijia/php-coding-standard": "^1.2|^2.0",
         "phpstan/phpstan": "^1.0",
         "phpstan/phpstan-deprecation-rules": "^1.0",
         "hyperf/db-connection": "~3.0.0",
