@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 /**
- * This file is part of Hyperf.
+ * This file is part of guandeng/hyperf-telescope.
  *
- * @link     https://www.hyperf.io
- * @document https://hyperf.wiki
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ * @link     https://github.com/guandeng/hyperf-telescope
+ * @document https://github.com/guandeng/hyperf-telescope/blob/main/README.md
+ * @contact  guandeng@gmail.com
  */
 
 namespace Guandeng\Telescope\Aspect;
@@ -34,7 +33,7 @@ class CommandAspect extends AbstractAspect
     {
         return tap($proceedingJoinPoint->process(), function ($result) use ($proceedingJoinPoint) {
             $input = $proceedingJoinPoint->arguments['keys']['input'];
-            $command =  $input->getArguments()['command'] ?? 'default';
+            $command = $input->getArguments()['command'] ?? 'default';
             $arguments = $input->getArguments();
             $options = $input->getOptions();
             // to do

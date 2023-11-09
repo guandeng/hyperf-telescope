@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 /**
- * This file is part of Hyperf.
+ * This file is part of guandeng/hyperf-telescope.
  *
- * @link     https://www.hyperf.io
- * @document https://hyperf.wiki
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ * @link     https://github.com/guandeng/hyperf-telescope
+ * @document https://github.com/guandeng/hyperf-telescope/blob/main/README.md
+ * @contact  guandeng@gmail.com
  */
 
 namespace Guandeng\Telescope\Listener;
@@ -20,8 +19,8 @@ use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\HttpServer\Event\RequestHandled;
 use Hyperf\HttpServer\Event\RequestReceived;
+use Hyperf\HttpServer\Event\RequestTerminated;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Stringable\Str;
 use Psr\Http\Message\ResponseInterface;
@@ -41,7 +40,7 @@ class RequestHandledListener implements ListenerInterface
     {
         return [
             RequestReceived::class,
-            RequestHandled::class,
+            RequestTerminated::class,
         ];
     }
 
@@ -52,7 +51,7 @@ class RequestHandledListener implements ListenerInterface
         }
         match ($event::class) {
             RequestReceived::class => $this->requestReceived($event),
-            RequestHandled::class => $this->requestHandled($event),
+            RequestTerminated::class => $this->requestHandled($event),
             default => '', // fix phpstan error
         };
     }
@@ -64,7 +63,7 @@ class RequestHandledListener implements ListenerInterface
          */
         $request = $event->request;
         $batchId = $request->getHeaderLine('batch-id');
-        if (!$batchId) {
+        if (! $batchId) {
             $batchId = Str::orderedUuid()->toString();
         } else {
             $subBatchId = Str::orderedUuid()->toString();
@@ -73,6 +72,9 @@ class RequestHandledListener implements ListenerInterface
         TelescopeContext::setBatchId($batchId);
     }
 
+    /**
+     * @param RequestTerminated $event
+     */
     public function requestHandled($event)
     {
         if ($event->response instanceof ResponsePlusInterface && $batchId = TelescopeContext::getBatchId()) {
@@ -83,7 +85,7 @@ class RequestHandledListener implements ListenerInterface
          */
         $psr7Request = $event->request;
         $psr7Response = $event->response;
-        $middlewares = $event->middlewares ?? '';
+        $middlewares = $this->config->get('middlewares.' . $event->server, []);
         $startTime = $psr7Request->getServerParams()['request_time_float'];
         if ($this->incomingRequest($psr7Request)) {
             /** @var Dispatched $dispatched */
@@ -240,7 +242,7 @@ class RequestHandledListener implements ListenerInterface
                     'headers' => $headers,
                     'response_status' => $response_status,
                     'duration' => $duration,
-                    ]);
+                ]);
                 $subBatchId = (string) TelescopeContext::getSubBatchId();
                 $entry->batchId($batchId)->subBatchId($subBatchId)->type(EntryType::CLIENT_REQUEST)->user();
                 $entry->create();
@@ -284,7 +286,7 @@ class RequestHandledListener implements ListenerInterface
     protected function response(ResponseInterface $response)
     {
         $content = $response->getBody()->getContents();
-        if (!$this->contentWithinLimits($content)) {
+        if (! $this->contentWithinLimits($content)) {
             return 'Purged By Hyperf Telescope';
         }
 

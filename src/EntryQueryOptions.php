@@ -2,14 +2,17 @@
 
 declare(strict_types=1);
 /**
- * This file is part of Hyperf.
+ * This file is part of guandeng/hyperf-telescope.
  *
- * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ * @link     https://github.com/guandeng/hyperf-telescope
+ * @document https://github.com/guandeng/hyperf-telescope/blob/main/README.md
+ * @contact  guandeng@gmail.com
  */
+
 namespace Guandeng\Telescope;
+
+use Hyperf\HttpServer\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 class EntryQueryOptions
 {
@@ -57,25 +60,24 @@ class EntryQueryOptions
 
     /**
      * Create new entry query options from the incoming request.
+     * @param Request $request
      *
-     * @param \Illuminate\Http\Request $request
      * @return static
      */
-    public static function fromRequest(RequestInterface $request)
+    public static function fromRequest(ServerRequestInterface $request)
     {
         return (new static())
-            ->batchId($request->batch_id)
-            ->uuids($request->uuids)
-            ->beforeSequence($request->before)
-            ->tag($request->tag)
-            ->familyHash($request->family_hash)
-            ->limit($request->take ?? 50);
+            ->batchId($request->input('batch_id'))
+            ->uuids($request->input('uuids'))
+            ->beforeSequence($request->input('before'))
+            ->tag($request->input('tag'))
+            ->familyHash($request->input('family_hash'))
+            ->limit($request->input('take') ?? 50);
     }
 
     /**
      * Create new entry query options for the given batch ID.
      *
-     * @param string $batchId
      * @return static
      */
     public static function forBatchId(?string $batchId)
@@ -86,7 +88,6 @@ class EntryQueryOptions
     /**
      * Set the batch ID for the query.
      *
-     * @param string $batchId
      * @return $this
      */
     public function batchId(?string $batchId)
@@ -99,7 +100,6 @@ class EntryQueryOptions
     /**
      * Set the list of UUIDs of entries tor retrieve.
      *
-     * @param array $uuids
      * @return $this
      */
     public function uuids(?array $uuids)
@@ -125,7 +125,6 @@ class EntryQueryOptions
     /**
      * Set the tag that must belong to retrieved entries.
      *
-     * @param string $tag
      * @return $this
      */
     public function tag(?string $tag)
@@ -138,7 +137,6 @@ class EntryQueryOptions
     /**
      * Set the family hash that must belong to retrieved entries.
      *
-     * @param string $familyHash
      * @return $this
      */
     public function familyHash(?string $familyHash)

@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 /**
- * This file is part of Hyperf.
+ * This file is part of guandeng/hyperf-telescope.
  *
- * @link     https://www.hyperf.io
- * @document https://hyperf.wiki
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ * @link     https://github.com/guandeng/hyperf-telescope
+ * @document https://github.com/guandeng/hyperf-telescope/blob/main/README.md
+ * @contact  guandeng@gmail.com
  */
 
 namespace Guandeng\Telescope;
@@ -52,7 +51,7 @@ class IncomingEntry
     /**
      * The entry's family hash.
      *
-     * @var null|string
+     * @var string|null
      */
     public $familyHash;
 
@@ -103,9 +102,8 @@ class IncomingEntry
      * Create a new entry instance.
      *
      * @param mixed ...$arguments
-     * @return static
      */
-    public static function make(...$arguments)
+    public static function make(...$arguments): static
     {
         return new static(...$arguments);
     }
@@ -299,7 +297,7 @@ class IncomingEntry
     /**
      * Get the family look-up hash for the incoming entry.
      *
-     * @return null|string
+     * @return string|null
      */
     public function familyHash()
     {
