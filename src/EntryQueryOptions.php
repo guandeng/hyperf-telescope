@@ -11,6 +11,9 @@ declare(strict_types=1);
 
 namespace Guandeng\Telescope;
 
+use Hyperf\HttpServer\Request;
+use Psr\Http\Message\ServerRequestInterface;
+
 class EntryQueryOptions
 {
     /**
@@ -57,19 +60,19 @@ class EntryQueryOptions
 
     /**
      * Create new entry query options from the incoming request.
+     * @param Request $request
      *
-     * @param \Illuminate\Http\Request $request
      * @return static
      */
-    public static function fromRequest(RequestInterface $request)
+    public static function fromRequest(ServerRequestInterface $request)
     {
         return (new static())
-            ->batchId($request->batch_id)
-            ->uuids($request->uuids)
-            ->beforeSequence($request->before)
-            ->tag($request->tag)
-            ->familyHash($request->family_hash)
-            ->limit($request->take ?? 50);
+            ->batchId($request->input('batch_id'))
+            ->uuids($request->input('uuids'))
+            ->beforeSequence($request->input('before'))
+            ->tag($request->input('tag'))
+            ->familyHash($request->input('family_hash'))
+            ->limit($request->input('take') ?? 50);
     }
 
     /**
