@@ -10,7 +10,7 @@ hyperf版本的望远镜
 - [x] 记录log
 - [x] 记录command
 - [x] 记录event
-- [ ] 记录http client
+- [x] 记录http client
 
 ### 安装组件
 `composer require guandeng/hyperf-telescope:dev-main`
@@ -29,7 +29,7 @@ return [
 ];
 
 ```
-###  对端添加对应中间件(GRPC)，该功能属于 beta 版本
+### middlewares.php添加中间件，该功能属于 beta 版本
 ```
 <?php
 

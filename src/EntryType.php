@@ -47,4 +47,6 @@ class EntryType
     public const VIEW = 'view';
 
     public const SERVICE = 'service';
+
+    public const CLIENT_REQUEST = 'client_request';
 }

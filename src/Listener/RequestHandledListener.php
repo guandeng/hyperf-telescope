@@ -115,6 +115,7 @@ class RequestHandledListener implements ListenerInterface
             $this->loggerRecord($batchId);
             $this->eventRecord($batchId);
             $this->commandRecord($batchId);
+            $this->clientReuestsRecord($batchId);
         }
     }
 
@@ -214,7 +215,6 @@ class RequestHandledListener implements ListenerInterface
     {
         $arr = Context::get('command_record', []);
         foreach ($arr as [$command, $arguments, $options, $exit_code]) {
-            var_dump($command, $arguments, $options);
             Coroutine::create(function () use ($batchId, $command, $arguments, $options, $exit_code) {
                 $entry = IncomingEntry::make([
                     'command' => '[' . $this->getAppName() . '] ' . $command,
@@ -224,6 +224,25 @@ class RequestHandledListener implements ListenerInterface
                 ]);
                 $subBatchId = (string) TelescopeContext::getSubBatchId();
                 $entry->batchId($batchId)->subBatchId($subBatchId)->type(EntryType::COMMAND)->user();
+                $entry->create();
+            });
+        }
+    }
+
+    protected function clientReuestsRecord(string $batchId = ''): void
+    {
+        $arr = Context::get('client_requests_record', []);
+        foreach ($arr as [$method, $uri,$headers,$response_status,$duration]) {
+            Coroutine::create(function () use ($batchId, $method, $uri, $headers, $response_status, $duration) {
+                $entry = IncomingEntry::make([
+                    'method' => $method,
+                    'uri' => '[' . $this->getAppName() . '] ' . $uri,
+                    'headers' => $headers,
+                    'response_status' => $response_status,
+                    'duration' => $duration,
+                    ]);
+                $subBatchId = (string) TelescopeContext::getSubBatchId();
+                $entry->batchId($batchId)->subBatchId($subBatchId)->type(EntryType::CLIENT_REQUEST)->user();
                 $entry->create();
             });
         }

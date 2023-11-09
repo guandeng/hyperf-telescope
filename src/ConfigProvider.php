@@ -40,6 +40,7 @@ class ConfigProvider
                 \Guandeng\Telescope\Aspect\LogAspect::class,
                 \Guandeng\Telescope\Aspect\EventAspect::class,
                 \Guandeng\Telescope\Aspect\CommandAspect::class,
+                \Guandeng\Telescope\Aspect\HttpClientAspect::class,
             ],
             'view' => [
                 'engine' => \Guandeng\Telescope\TemplateEngine::class,
