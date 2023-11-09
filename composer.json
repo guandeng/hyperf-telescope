@@ -52,7 +52,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
-        "analyse": "@php vendor/bin/phpstan analyse --memory-limit 1G",
+        "analyse": "@php vendor/bin/phpstan analyse --memory-limit 1G -l 0",
         "cs-fix": "@php vendor/bin/php-cs-fixer fix $1"
     }
 }
