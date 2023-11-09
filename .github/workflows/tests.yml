@@ -35,6 +35,9 @@ jobs:
       - name: Check Composer Version
         run: composer -V
 
+      - name: Check Swoole Version
+        run: php --ri swoole
+
       - name: Check PHP Extensions
         run: php -m
 
