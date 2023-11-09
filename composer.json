@@ -19,7 +19,9 @@
     "require-dev": {
         "hyperf/http-server": "~3.0.0",
         "swow/psr7-plus": "^1.1",
-        "huangdijia/php-coding-standard": "^2.0"
+        "huangdijia/php-coding-standard": "^2.0",
+        "phpstan/phpstan": "^1.0",
+        "phpstan/phpstan-deprecation-rules": "^1.0"
     },
     "autoload": {
         "psr-4": {
@@ -43,6 +45,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
+        "analyse": "@php vendor/bin/phpstan analyse --memory-limit 1G",
         "cs-fix": "@php vendor/bin/php-cs-fixer fix $1"
     }
 }
