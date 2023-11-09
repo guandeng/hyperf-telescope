@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 /**
- * This file is part of Hyperf.
+ * This file is part of guandeng/hyperf-telescope.
  *
- * @link     https://www.hyperf.io
- * @document https://hyperf.wiki
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ * @link     https://github.com/guandeng/hyperf-telescope
+ * @document https://github.com/guandeng/hyperf-telescope/blob/main/README.md
+ * @contact  guandeng@gmail.com
  */
 
 namespace Guandeng\Telescope\Middleware;
@@ -25,8 +24,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use RuntimeException;
-use Throwable;
 
 use function Hyperf\Collection\collect;
 use function Hyperf\Coroutine\defer;
@@ -43,9 +40,9 @@ class TelescopeMiddleware implements MiddlewareInterface
         if (env('TELESCOPE_ENABLED', false) === false) {
             return $handler->handle($request);
         }
-        
+
         $batchId = $request->getHeaderLine('batch-id');
-        if (!$batchId) {
+        if (! $batchId) {
             $batchId = Str::orderedUuid()->toString();
         } else {
             $subBatchId = Str::orderedUuid()->toString();
@@ -60,15 +57,14 @@ class TelescopeMiddleware implements MiddlewareInterface
             $response = $response->withHeader('batch-id', $batchId);
         }
 
-        defer(fn() =>$this->requestHandled($request, $response));
-            
+        defer(fn () => $this->requestHandled($request, $response));
+
         return $response;
     }
 
     /**
-     * 
-     * @param ServerRequestInterface $request 
-     * @param \Psr\Http\Message\ResponseInterface $response 
+     * @param ServerRequestInterface $request
+     * @param \Psr\Http\Message\ResponseInterface $response
      */
     public function requestHandled($request, $response)
     {
@@ -205,7 +201,7 @@ class TelescopeMiddleware implements MiddlewareInterface
     {
         $arr = Context::get('command_record', []);
         foreach ($arr as [$command, $arguments, $options, $exit_code]) {
-            Coroutine::create(function () use ($batchId, $command, $arguments, $options, $exit_code) {
+            Coroutine::create(function () use ($batchId, $command, $options, $exit_code) {
                 $entry = IncomingEntry::make([
                     'name' => '[' . $this->getAppName() . '] ' . $command,
                     'exit_code' => $exit_code,
@@ -262,7 +258,7 @@ class TelescopeMiddleware implements MiddlewareInterface
                     'headers' => $headers,
                     'response_status' => $response_status,
                     'duration' => $duration,
-                    ]);
+                ]);
                 $subBatchId = (string) TelescopeContext::getSubBatchId();
                 $entry->batchId($batchId)->subBatchId($subBatchId)->type(EntryType::CLIENT_REQUEST)->user();
                 $entry->create();
@@ -273,7 +269,7 @@ class TelescopeMiddleware implements MiddlewareInterface
     protected function response(ResponseInterface $response)
     {
         $content = $response->getBody()->getContents();
-        if (!$this->contentWithinLimits($content)) {
+        if (! $this->contentWithinLimits($content)) {
             return 'Purged By Hyperf Telescope';
         }
 
