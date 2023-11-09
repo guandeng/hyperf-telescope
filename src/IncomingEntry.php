@@ -102,9 +102,8 @@ class IncomingEntry
      * Create a new entry instance.
      *
      * @param mixed ...$arguments
-     * @return static
      */
-    public static function make(...$arguments)
+    public static function make(...$arguments): static
     {
         return new static(...$arguments);
     }

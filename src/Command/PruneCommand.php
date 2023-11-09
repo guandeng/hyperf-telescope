@@ -30,7 +30,7 @@ class PruneCommand extends Command
 
     public function handle()
     {
-        $created_at = Carbon::now()->subHours($this->option('hours'));
+        $created_at = Carbon::now()->subHours($this->input->getOption('hours'));
         Db::connection('telescope')->table('telescope_entries')
             ->where('created_at', '<', $created_at)
             ->delete();
