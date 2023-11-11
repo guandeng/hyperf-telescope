@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Guandeng\Telescope;
 
-
 use function Hyperf\Support\env;
 
 class ConfigProvider

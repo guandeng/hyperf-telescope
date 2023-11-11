@@ -18,7 +18,6 @@ use Hyperf\Collection\Arr;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\HttpServer\Event;
 use Hyperf\Stringable\Str;
-use Throwable;
 
 use function Hyperf\Collection\collect;
 
@@ -31,7 +30,6 @@ class ExceptionHandlerListener implements ListenerInterface
     public function listen(): array
     {
         return [
-            Event\RequestReceived::class,
             Event\RequestTerminated::class,
         ];
     }
@@ -44,23 +42,24 @@ class ExceptionHandlerListener implements ListenerInterface
         if ($this->switchManager->isEnable('exception') === false) {
             return;
         }
-        if ($event instanceof Event\RequestTerminated && $event->exception instanceof Throwable) {
-            $exception = $event->exception;
 
-            $trace = collect($exception->getTrace())->map(function ($item) {
-                return Arr::only($item, ['file', 'line']);
-            })->toArray();
-
-            Telescope::recordException(IncomingEntry::make([
-                'class' => get_class($exception),
-                'file' => $exception->getFile(),
-                'line' => $exception->getLine(),
-                'message' => $exception->getMessage(),
-                'context' => null,
-                'trace' => $trace,
-                'line_preview' => $this->getContext($exception),
-            ]));
+        if (! $exception = $event->getThrowable()) {
+            return;
         }
+
+        $trace = collect($exception->getTrace())->map(function ($item) {
+            return Arr::only($item, ['file', 'line']);
+        })->toArray();
+
+        Telescope::recordException(IncomingEntry::make([
+            'class' => get_class($exception),
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
+            'message' => $exception->getMessage(),
+            'context' => null,
+            'trace' => $trace,
+            'line_preview' => $this->getContext($exception),
+        ]));
     }
 
     protected function getContext($exception)
@@ -70,6 +69,7 @@ class ExceptionHandlerListener implements ListenerInterface
                 $exception->getLine() => "eval()'d code",
             ];
         }
+
         return collect(explode("\n", file_get_contents($exception->getFile())))
             ->slice($exception->getLine() - 10, 20)
             ->mapWithKeys(function ($value, $key) {

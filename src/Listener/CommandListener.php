@@ -14,16 +14,12 @@ namespace Guandeng\Telescope\Listener;
 use Guandeng\Telescope\IncomingEntry;
 use Guandeng\Telescope\SwitchManager;
 use Guandeng\Telescope\Telescope;
-use Hyperf\Collection\Arr;
 use Hyperf\Command\Event\AfterExecute;
-use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Stringable\Str;
 
 /**
  * @property \Symfony\Component\Console\Input\InputInterface $input
  * @property int $exitCode
- * @package Guandeng\Telescope\Listener
  */
 class CommandListener implements ListenerInterface
 {
@@ -48,10 +44,10 @@ class CommandListener implements ListenerInterface
         }
 
         $command = $event->getCommand();
-        $arguments = (fn() => $this->input->getArguments())->call($command);
-        $options = (fn() => $this->input->getOptions())->call($command);
+        $arguments = (fn () => $this->input->getArguments())->call($command);
+        $options = (fn () => $this->input->getOptions())->call($command);
         $name = $command->getName();
-        $exitCode = (fn() => $this->exitCode)->call($command);
+        $exitCode = (fn () => $this->exitCode)->call($command);
 
         Telescope::recordCommand(IncomingEntry::make([
             'command' => $name,
