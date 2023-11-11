@@ -11,9 +11,10 @@ declare(strict_types=1);
 
 namespace Guandeng\Telescope\Aspect;
 
+use Guandeng\Telescope\IncomingEntry;
 use Guandeng\Telescope\Severity;
-use Hyperf\Context\Context;
-use Hyperf\Contract\ContainerInterface;
+use Guandeng\Telescope\SwitchManager;
+use Guandeng\Telescope\Telescope;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Stringable\Str;
@@ -28,33 +29,33 @@ class LogAspect extends AbstractAspect
         Logger::class . '::addRecord',
     ];
 
-    public function __construct(private ContainerInterface $container)
+    public function __construct(protected SwitchManager $switcherManager)
     {
     }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         return tap($proceedingJoinPoint->process(), function ($result) use ($proceedingJoinPoint) {
+            if (! $this->switcherManager->isEnable('log')) {
+                return;
+            }
             $level = $proceedingJoinPoint->arguments['keys']['level'];
             $level = $level instanceof UnitEnum ? (int) $level->value : (int) $level;
             $message = $proceedingJoinPoint->arguments['keys']['message'];
             $context = $proceedingJoinPoint->arguments['keys']['context'];
-            if (isset($context['no_sentry_aspect']) && $context['no_sentry_aspect'] === true) {
-                return;
-            }
-
             if (Str::contains($message, 'telescope')) {
                 return;
             }
-            $originalInstance = $proceedingJoinPoint->getInstance();
-            $name = $originalInstance->getName();
-            if ($name == 'sql') {
+            if ($proceedingJoinPoint->getInstance()->getName() == 'sql') {
                 return;
             }
-            $arr = Context::get('log_record', []);
-            $level = (string) $this->getLogLevel($level);
-            $arr[] = [$level, $message, $context];
-            Context::set('log_record', $arr);
+            Telescope::recordLog(
+                IncomingEntry::make([
+                    'level' => (string) $this->getLogLevel($level),
+                    'message' => Telescope::getAppName() . $message,
+                    'context' => $context,
+                ])
+            );
         });
     }
 

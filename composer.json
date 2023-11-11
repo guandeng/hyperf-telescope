@@ -20,7 +20,7 @@
         "guzzlehttp/guzzle": "^6.0|^7.0"
     },
     "require-dev": {
-        "hyperf/http-server": "~3.0.0",
+        "hyperf/http-server": "~3.0.42",
         "swow/psr7-plus": "^1.1",
         "huangdijia/php-coding-standard": "^1.2|^2.0",
         "phpstan/phpstan": "^1.0",
@@ -28,7 +28,8 @@
         "hyperf/db-connection": "~3.0.0",
         "hyperf/redis": "~3.0.0",
         "monolog/monolog": "^2.0",
-        "hyperf/grpc-client": "~3.0.0"
+        "hyperf/grpc-client": "~3.0.0",
+        "swoole/ide-helper": "dev-master"
     },
     "autoload": {
         "psr-4": {

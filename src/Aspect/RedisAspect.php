@@ -11,22 +11,26 @@ declare(strict_types=1);
 
 namespace Guandeng\Telescope\Aspect;
 
-use Hyperf\Context\Context;
+use Guandeng\Telescope\IncomingEntry;
+use Guandeng\Telescope\SwitchManager;
+use Guandeng\Telescope\Telescope;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Redis\Redis;
-use Psr\Container\ContainerInterface;
 
 use function Hyperf\Collection\collect;
 use function Hyperf\Tappable\tap;
 
+/**
+ * @property string $poolName
+ */
 class RedisAspect extends AbstractAspect
 {
     public array $classes = [
         Redis::class . '::__call',
     ];
 
-    public function __construct(private ContainerInterface $container)
+    public function __construct(protected SwitchManager $switcherManager)
     {
     }
 
@@ -34,12 +38,19 @@ class RedisAspect extends AbstractAspect
     {
         $startTime = microtime(true);
         return tap($proceedingJoinPoint->process(), function ($result) use ($proceedingJoinPoint, $startTime) {
+            if (! $this->switcherManager->isEnable('redis')) {
+                return;
+            }
+
             $arguments = $proceedingJoinPoint->arguments['keys'];
             $commands = $this->formatCommand($arguments['name'], $arguments['arguments']);
-            $arr = Context::get('redis_record', []);
-            $time = floor((microtime(true) - $startTime) * 1000);
-            $arr[] = [$time, $commands];
-            Context::set('redis_record', $arr);
+            $connection = (fn () => $this->poolName ?? 'default')->call($proceedingJoinPoint->getInstance());
+
+            Telescope::recordRedis(IncomingEntry::make([
+                'connection' => $connection,
+                'command' => Telescope::getAppName() . $commands,
+                'time' => number_format((microtime(true) - $startTime) * 1000, 2, '.', ''),
+            ]));
         });
     }
 

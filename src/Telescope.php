@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace Guandeng\Telescope;
 
 use Closure;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Contract\ConfigInterface;
 
 class Telescope
 {
@@ -118,4 +120,76 @@ class Telescope
      * @var bool
      */
     public static $runsMigrations = true;
+
+    public static function recordCache(IncomingEntry $entry)
+    {
+        static::record(EntryType::CACHE, $entry);
+    }
+
+    public static function recordCommand(IncomingEntry $entry)
+    {
+        static::record(EntryType::COMMAND, $entry);
+    }
+
+    public static function recordEvent(IncomingEntry $entry)
+    {
+        static::record(EntryType::EVENT, $entry);
+    }
+
+    public static function recordException(IncomingEntry $entry)
+    {
+        static::record(EntryType::EXCEPTION, $entry);
+    }
+
+    public static function recordLog(IncomingEntry $entry)
+    {
+        static::record(EntryType::LOG, $entry);
+    }
+
+    public static function recordQuery(IncomingEntry $entry)
+    {
+        static::record(EntryType::QUERY, $entry);
+    }
+
+    public static function recordRedis(IncomingEntry $entry)
+    {
+        static::record(EntryType::REDIS, $entry);
+    }
+
+    public static function recordRequest(IncomingEntry $entry)
+    {
+        static::record(EntryType::REQUEST, $entry);
+    }
+
+    public static function recordService(IncomingEntry $entry)
+    {
+        static::record(EntryType::SERVICE, $entry);
+    }
+
+    public static function recordClientRequest(IncomingEntry $entry)
+    {
+        static::record(EntryType::CLIENT_REQUEST, $entry);
+    }
+
+    public static function getAppName(): string
+    {
+        $container = ApplicationContext::getContainer();
+        $config = $container->get(ConfigInterface::class);
+        return $config->get('telescope.app.name', '') ? '[' . $config->get('telescope.app.name', '') . '] ' : '';
+    }
+
+    public static function getQuerySlow(): int
+    {
+        $container = ApplicationContext::getContainer();
+        $config = $container->get(ConfigInterface::class);
+        return $config->get('telescope.query_slow', 50);
+    }
+
+    protected static function record(string $type, IncomingEntry $entry)
+    {
+        $batchId = (string) TelescopeContext::getBatchId();
+        $subBatchId = (string) TelescopeContext::getSubBatchId();
+        $entry->batchId($batchId)->subBatchId($subBatchId)->type($type)->user();
+        $entry->create();
+    }
 }

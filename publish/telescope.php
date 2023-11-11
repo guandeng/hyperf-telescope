@@ -12,9 +12,20 @@ use function Hyperf\Support\env;
 
 return [
     'app' => [
-        'name' => env('APP_NAME', 'skeleton'),
+        'name' => env('APP_NAME', ''),
     ],
-    'enabled' => env('TELESCOPE_ENABLED', false),
+    'enable' => [
+        'request' => env('TELESCOPE_ENABLE_REQUEST', false),
+        'command' => env('TELESCOPE_ENABLE_COMMAND', false),
+        'grpc' => env('TELESCOPE_ENABLE_GRPC', false),
+        'log' => env('TELESCOPE_ENABLE_LOG', false),
+        'redis' => env('TELESCOPE_ENABLE_REDIS', false),
+        'event' => env('TELESCOPE_ENABLE_EVENT', false),
+        'exception' => env('TELESCOPE_ENABLE_EXCEPTION', false),
+        'job' => env('TELESCOPE_ENABLE_JOB', false),
+        'db' => env('TELESCOPE_ENABLE_DB', false),
+        'guzzle' => env('TELESCOPE_ENABLE_GUZZLE', false),
+    ],
     'timezone' => env('TELESCOPE_TIMEZONE', 'Asia/Shanghai'),
     'query_slow' => env('TELESCOPE_QUERY_SLOW', 50),
 ];
