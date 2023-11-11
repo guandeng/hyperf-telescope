@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Guandeng\Telescope;
 
+
 use function Hyperf\Support\env;
 
 class ConfigProvider
@@ -27,6 +28,7 @@ class ConfigProvider
             ],
             'listeners' => [
                 Listener\CheckIsEnableRequestLifecycleListener::class,
+                Listener\CommandListener::class,
                 Listener\DbQueryListener::class,
                 Listener\ExceptionHandlerListener::class,
             ],
@@ -35,7 +37,6 @@ class ConfigProvider
                 Aspect\RedisAspect::class,
                 Aspect\LogAspect::class,
                 Aspect\EventAspect::class,
-                Aspect\CommandAspect::class,
                 Aspect\HttpClientAspect::class,
             ],
             'view' => [
