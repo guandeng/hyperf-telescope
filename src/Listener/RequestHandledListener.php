@@ -23,7 +23,6 @@ use Hyperf\HttpServer\Event\RequestTerminated;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Stringable\Str;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Swow\Psr7\Message\ResponsePlusInterface;
 
 class RequestHandledListener implements ListenerInterface
@@ -52,19 +51,20 @@ class RequestHandledListener implements ListenerInterface
         };
     }
 
+    /**
+     * @param RequestReceived|RequestTerminated $event
+     */
     public function requestReceived($event)
     {
-        /**
-         * @var ServerRequestInterface $request
-         */
         $request = $event->request;
-        $batchId = $request->getHeaderLine('batch-id');
-        if (! $batchId) {
+
+        if (! $batchId = $request->getHeaderLine('batch-id')) {
             $batchId = Str::orderedUuid()->toString();
         } else {
             $subBatchId = Str::orderedUuid()->toString();
             TelescopeContext::setSubBatchId($subBatchId);
         }
+
         TelescopeContext::setBatchId($batchId);
     }
 
@@ -73,16 +73,18 @@ class RequestHandledListener implements ListenerInterface
      */
     public function requestHandled($event)
     {
-        if ($event->response instanceof ResponsePlusInterface && $batchId = TelescopeContext::getBatchId()) {
+        if (
+            $event->response instanceof ResponsePlusInterface
+            && $batchId = TelescopeContext::getBatchId()
+        ) {
             $event->response->addHeader('batch-id', $batchId);
         }
-        /**
-         * @var \Hyperf\HttpMessage\Server\Request $psr7Request
-         */
+
         $psr7Request = $event->request;
         $psr7Response = $event->response;
         $middlewares = $this->config->get('middlewares.' . $event->server, []);
         $startTime = $psr7Request->getServerParams()['request_time_float'];
+
         if ($this->incomingRequest($psr7Request)) {
             /** @var Dispatched $dispatched */
             $dispatched = $psr7Request->getAttribute(Dispatched::class);
@@ -110,9 +112,10 @@ class RequestHandledListener implements ListenerInterface
         }
     }
 
-    protected function incomingRequest($psr7Request)
+    protected function incomingRequest($psr7Request): bool
     {
         $target = $psr7Request->getRequestTarget();
+
         if (Str::contains($target, '.ico')) {
             return false;
         }
@@ -124,13 +127,16 @@ class RequestHandledListener implements ListenerInterface
         return true;
     }
 
-    protected function response(ResponseInterface $response)
+    protected function response(ResponseInterface $response): string
     {
         $stream = $response->getBody();
+
         if ($stream->isSeekable()) {
             $stream->rewind();
         }
+
         $content = $stream->getContents();
+
         if (is_string($content)) {
             if (! $this->contentWithinLimits($content)) {
                 return 'Purged By Hyperf Telescope';
