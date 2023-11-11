@@ -11,14 +11,20 @@ declare(strict_types=1);
 
 namespace Guandeng\Telescope\Listener;
 
+use Guandeng\Telescope\IncomingEntry;
+use Guandeng\Telescope\SwitchManager;
+use Guandeng\Telescope\Telescope;
 use Hyperf\Collection\Arr;
-use Hyperf\Context\Context;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Stringable\Str;
 
 class QueryListener implements ListenerInterface
 {
+    public function __construct(private SwitchManager $switchManager)
+    {
+    }
+
     public function listen(): array
     {
         return [
@@ -31,6 +37,9 @@ class QueryListener implements ListenerInterface
      */
     public function process(object $event): void
     {
+        if ($this->switchManager->isEnabled() === false) {
+            return;
+        }
         if ($event instanceof QueryExecuted) {
             $sql = $event->sql;
             if (! Arr::isAssoc($event->bindings)) {
@@ -38,13 +47,18 @@ class QueryListener implements ListenerInterface
                     $sql = Str::replaceFirst('?', "'{$value}'", $sql);
                 }
             }
-            if (! Str::contains($sql, 'telescope')) {
-                $arr = Context::get('query_record', []);
-
-                $arr[] = [$event, $sql];
-
-                Context::set('query_record', $arr);
+            if (Str::contains($sql, 'telescope')) {
+                return;
             }
+            $optionSlow = Telescope::getQuerySlow();
+            Telescope::recordQuery(IncomingEntry::make([
+                'connection' => $event->connectionName,
+                'bindings' => [],
+                'sql' => Telescope::getAppName() . $sql,
+                'time' => number_format($event->time, 2, '.', ''),
+                'slow' => $event->time >= $optionSlow,
+                'hash' => md5($sql),
+            ]));
         }
     }
 }

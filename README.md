@@ -29,7 +29,7 @@ return [
 ];
 
 ```
-### middlewares.php添加中间件，该功能属于 beta 版本
+### middlewares.php添加中间件
 ```
 <?php
 

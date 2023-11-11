@@ -11,9 +11,10 @@ declare(strict_types=1);
 
 namespace Guandeng\Telescope\Aspect;
 
+use Guandeng\Telescope\IncomingEntry;
+use Guandeng\Telescope\SwitchManager;
+use Guandeng\Telescope\Telescope;
 use GuzzleHttp\Client;
-use Hyperf\Context\Context;
-use Hyperf\Contract\ContainerInterface;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
@@ -26,13 +27,16 @@ class HttpClientAspect extends AbstractAspect
         Client::class . '::requestAsync',
     ];
 
-    public function __construct(private ContainerInterface $container)
+    public function __construct(protected SwitchManager $switcherManager)
     {
     }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         return tap($proceedingJoinPoint->process(), function ($result) use ($proceedingJoinPoint) {
+            if (! $this->switcherManager->isEnabled()) {
+                return;
+            }
             $options = $proceedingJoinPoint->arguments['keys']['options'];
             if (isset($options['no_aspect']) && $options['no_aspect'] === true) {
                 return;
@@ -41,12 +45,17 @@ class HttpClientAspect extends AbstractAspect
             $method = $arguments['keys']['method'] ?? 'Null';
             $uri = $arguments['keys']['uri'] ?? 'Null';
             $headers = $options['headers'] ?? [];
-            // to do
-            $response_status = 200;
-            $duration = 0;
-            $arr = Context::get('client_request_record', []);
-            $arr[] = [$method, $uri, $headers, $response_status, $duration];
-            Context::set('client_request_record', $arr);
+
+            Telescope::recordClientRequest(IncomingEntry::make([
+                'method' => $method,
+                'uri' => $uri,
+                'headers' => $headers,
+                'payload' => '',
+                'response_status' => 0,
+                'response_headers' => '',
+                'response' => '',
+                'duration' => 0,
+            ]));
         });
     }
 }

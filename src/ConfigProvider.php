@@ -11,38 +11,35 @@ declare(strict_types=1);
 
 namespace Guandeng\Telescope;
 
-use Guandeng\Telescope\Listener\CheckIsEnableRequestLifecycleListener;
-
 use function Hyperf\Support\env;
 
 class ConfigProvider
 {
     public function __invoke(): array
     {
-        if (env('TELESCOPE_ENABLED', false) === false) {
-            return [];
-        }
+        defined('BASE_PATH') or define('BASE_PATH', '');
 
         return [
             'commands' => [
-                \Guandeng\Telescope\Command\ClearCommand::class,
-                \Guandeng\Telescope\Command\InstallCommand::class,
-                \Guandeng\Telescope\Command\PruneCommand::class,
+                Command\ClearCommand::class,
+                Command\InstallCommand::class,
+                Command\PruneCommand::class,
             ],
             'listeners' => [
-                \Guandeng\Telescope\Listener\QueryListener::class,
-                CheckIsEnableRequestLifecycleListener::class,
+                Listener\CheckIsEnableRequestLifecycleListener::class,
+                Listener\QueryListener::class,
+                Listener\ExceptionHandlerListener::class,
             ],
             'aspects' => [
-                \Guandeng\Telescope\Aspect\GrpcClientAspect::class,
-                \Guandeng\Telescope\Aspect\RedisAspect::class,
-                \Guandeng\Telescope\Aspect\LogAspect::class,
-                \Guandeng\Telescope\Aspect\EventAspect::class,
-                \Guandeng\Telescope\Aspect\CommandAspect::class,
-                \Guandeng\Telescope\Aspect\HttpClientAspect::class,
+                Aspect\GrpcClientAspect::class,
+                Aspect\RedisAspect::class,
+                Aspect\LogAspect::class,
+                Aspect\EventAspect::class,
+                Aspect\CommandAspect::class,
+                Aspect\HttpClientAspect::class,
             ],
             'view' => [
-                'engine' => \Guandeng\Telescope\TemplateEngine::class,
+                'engine' => TemplateEngine::class,
                 'mode' => \Hyperf\View\Mode::SYNC,
                 'config' => [
                     'view_path' => BASE_PATH . '/vendor/guandeng/hyperf-telescope/storage/view/',
@@ -60,13 +57,6 @@ class ConfigProvider
                 'scan' => [
                     'paths' => [
                         __DIR__,
-                    ],
-                ],
-            ],
-            'exceptions' => [
-                'handler' => [
-                    'http' => [
-                        \Guandeng\Telescope\Exception\ErrorRecord::class,
                     ],
                 ],
             ],

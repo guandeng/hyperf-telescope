@@ -11,8 +11,9 @@ declare(strict_types=1);
 
 namespace Guandeng\Telescope\Aspect;
 
-use Hyperf\Context\Context;
-use Hyperf\Contract\ContainerInterface;
+use Guandeng\Telescope\IncomingEntry;
+use Guandeng\Telescope\SwitchManager;
+use Guandeng\Telescope\Telescope;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Event\EventDispatcher;
@@ -29,40 +30,43 @@ class EventAspect extends AbstractAspect
         EventDispatcher::class . '::dispatch',
     ];
 
-    public function __construct(private ContainerInterface $container, private ListenerProviderInterface $listeners)
+    public function __construct(protected SwitchManager $switcherManager, protected ListenerProviderInterface $listeners)
     {
     }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         return tap($proceedingJoinPoint->process(), function ($result) use ($proceedingJoinPoint) {
+            if (! $this->switcherManager->isEnabled()) {
+                return;
+            }
+
             $event = $proceedingJoinPoint->arguments['keys']['event'];
             $eventName = get_class($event);
             $listenerNames = [];
             foreach ($this->listeners->getListenersForEvent($event) as $listener) {
                 $listenerNames[] = $this->getListenerName($listener);
             }
-            if (Str::contains($eventName, 'Hyperf\\')) {
+            if (Str::startsWith($eventName, 'Hyperf\\')) {
                 return;
             }
             $ref = new ReflectionClass($event);
 
-            $c = $ref->getConstructor();
-            $payload = $c->getParameters();
+            $contructor = $ref->getConstructor();
+            $payload = $contructor->getParameters();
             $payload = $this->extractPayload($eventName, $payload);
-            $arr = Context::get('event_record', []);
-            $arr[] = [$listenerNames, $eventName, $payload];
-            Context::set('event_record', $arr);
+
+            Telescope::recordEvent(IncomingEntry::make([
+                'name' => Telescope::getAppName() . $eventName,
+                'listeners' => $listenerNames,
+                'payload' => $payload,
+                'hash' => md5($eventName),
+            ]));
         });
     }
 
     protected function extractPayload($eventName, $payload)
     {
-        // to do
-        // if (isset($payload[0]) && is_object($payload[0])) {
-        //     return ExtractProperties::from($payload[0]);
-        // }
-
         return collect($payload)->map(function ($value) {
             return is_object($value) ? [
                 'class' => get_class($value),

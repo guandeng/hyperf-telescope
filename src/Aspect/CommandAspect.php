@@ -11,9 +11,10 @@ declare(strict_types=1);
 
 namespace Guandeng\Telescope\Aspect;
 
+use Guandeng\Telescope\IncomingEntry;
+use Guandeng\Telescope\SwitchManager;
+use Guandeng\Telescope\Telescope;
 use Hyperf\Command\Command;
-use Hyperf\Context\Context;
-use Hyperf\Contract\ContainerInterface;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
@@ -25,22 +26,25 @@ class CommandAspect extends AbstractAspect
         Command::class . '::run',
     ];
 
-    public function __construct(private ContainerInterface $container)
+    public function __construct(protected SwitchManager $switcherManager)
     {
     }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         return tap($proceedingJoinPoint->process(), function ($result) use ($proceedingJoinPoint) {
+            if (! $this->switcherManager->isEnabled()) {
+                return;
+            }
+
             $input = $proceedingJoinPoint->arguments['keys']['input'];
-            $command = $input->getArguments()['command'] ?? 'default';
-            $arguments = $input->getArguments();
-            $options = $input->getOptions();
-            // to do
-            $exit_code = 0;
-            $arr = Context::get('command_record', []);
-            $arr[] = [$command, $arguments, $options, $exit_code];
-            Context::set('command_record', $arr);
+
+            Telescope::recordCommand(IncomingEntry::make([
+                'command' => $input->getArguments()['command'] ?? 'default',
+                'exit_code' => 0, // to do
+                'arguments' => $input->getArguments(),
+                'options' => $input->getOptions(),
+            ]));
         });
     }
 }

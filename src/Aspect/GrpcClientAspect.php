@@ -11,12 +11,12 @@ declare(strict_types=1);
 
 namespace Guandeng\Telescope\Aspect;
 
+use Guandeng\Telescope\SwitchManager;
 use Guandeng\Telescope\TelescopeContext;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\GrpcClient\GrpcClient;
 use Hyperf\GrpcClient\Request;
-use Psr\Container\ContainerInterface;
 use Throwable;
 
 class GrpcClientAspect extends AbstractAspect
@@ -25,7 +25,7 @@ class GrpcClientAspect extends AbstractAspect
         GrpcClient::class . '::send',
     ];
 
-    public function __construct(private ContainerInterface $container)
+    public function __construct(protected SwitchManager $switcherManager)
     {
     }
 
@@ -39,13 +39,14 @@ class GrpcClientAspect extends AbstractAspect
 
     private function processSend(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        $arguments = $proceedingJoinPoint->getArguments();
-        /** @var Request $request */
-        $request = $arguments[0];
-        $carrier = [];
-        $carrier['batch-id'] = TelescopeContext::getBatchId();
-        $request->headers = array_merge($request->headers, $carrier);
-
+        if ($this->switcherManager->isEnabled()) {
+            $arguments = $proceedingJoinPoint->getArguments();
+            /** @var Request $request */
+            $request = $arguments[0];
+            $carrier = [];
+            $carrier['batch-id'] = TelescopeContext::getBatchId();
+            $request->headers = array_merge($request->headers, $carrier);
+        }
         try {
             return $proceedingJoinPoint->process();
         } catch (Throwable $e) {
