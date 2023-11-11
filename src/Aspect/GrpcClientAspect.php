@@ -39,12 +39,13 @@ class GrpcClientAspect extends AbstractAspect
 
     private function processSend(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        if ($this->switcherManager->isEnabled()) {
+        if ($this->switcherManager->isEnable('grpc')) {
             $arguments = $proceedingJoinPoint->getArguments();
             /** @var Request $request */
             $request = $arguments[0];
             $carrier = [];
             $carrier['batch-id'] = TelescopeContext::getBatchId();
+            // todo
             $request->headers = array_merge($request->headers, $carrier);
         }
         try {

@@ -35,7 +35,7 @@ class RedisAspect extends AbstractAspect
     {
         $startTime = microtime(true);
         return tap($proceedingJoinPoint->process(), function ($result) use ($proceedingJoinPoint, $startTime) {
-            if (! $this->switcherManager->isEnabled()) {
+            if (! $this->switcherManager->isEnable('redis')) {
                 return;
             }
 

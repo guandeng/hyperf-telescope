@@ -42,7 +42,7 @@ class RequestHandledListener implements ListenerInterface
 
     public function process(object $event): void
     {
-        if ($this->switchManager->isEnabled() === false) {
+        if (! $this->switchManager->isEnable('request')) {
             return;
         }
         match ($event::class) {

@@ -41,7 +41,7 @@ class ExceptionHandlerListener implements ListenerInterface
      */
     public function process(object $event): void
     {
-        if ($this->switchManager->isEnabled() === false) {
+        if ($this->switchManager->isEnable('exception') === false) {
             return;
         }
         if ($event instanceof Event\RequestTerminated && $event->exception instanceof Throwable) {

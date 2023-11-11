@@ -19,7 +19,7 @@ use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Stringable\Str;
 
-class QueryListener implements ListenerInterface
+class DbQueryListener implements ListenerInterface
 {
     public function __construct(private SwitchManager $switchManager)
     {
@@ -37,7 +37,7 @@ class QueryListener implements ListenerInterface
      */
     public function process(object $event): void
     {
-        if ($this->switchManager->isEnabled() === false) {
+        if ($this->switchManager->isEnable('db') === false) {
             return;
         }
         if ($event instanceof QueryExecuted) {

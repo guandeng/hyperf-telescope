@@ -34,7 +34,7 @@ class HttpClientAspect extends AbstractAspect
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         return tap($proceedingJoinPoint->process(), function ($result) use ($proceedingJoinPoint) {
-            if (! $this->switcherManager->isEnabled()) {
+            if (! $this->switcherManager->isEnable('guzzle')) {
                 return;
             }
             $options = $proceedingJoinPoint->arguments['keys']['options'];

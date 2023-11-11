@@ -14,6 +14,18 @@ return [
     'app' => [
         'name' => env('APP_NAME', 'skeleton'),
     ],
+    'enable' => [
+        'request' => env('TELESCOPE_ENABLE_REQUEST', true),
+        'command' => env('TELESCOPE_ENABLE_COMMAND', true),
+        'grpc' => env('TELESCOPE_ENABLE_GRPC', true),
+        'log' => env('TELESCOPE_ENABLE_LOG', true),
+        'redis' => env('TELESCOPE_ENABLE_REDIS', true),
+        'event' => env('TELESCOPE_ENABLE_EVENT', true),
+        'exception' => env('TELESCOPE_ENABLE_EXCEPTION', true),
+        'job' => env('TELESCOPE_ENABLE_JOB', true),
+        'db' => env('TELESCOPE_ENABLE_DB', true),
+        'guzzle' => env('TELESCOPE_ENABLE_GUZZLE', true),
+    ],
     'enabled' => env('TELESCOPE_ENABLED', false),
     'timezone' => env('TELESCOPE_TIMEZONE', 'Asia/Shanghai'),
     'query_slow' => env('TELESCOPE_QUERY_SLOW', 50),

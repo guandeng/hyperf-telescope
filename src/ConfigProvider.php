@@ -27,7 +27,7 @@ class ConfigProvider
             ],
             'listeners' => [
                 Listener\CheckIsEnableRequestLifecycleListener::class,
-                Listener\QueryListener::class,
+                Listener\DbQueryListener::class,
                 Listener\ExceptionHandlerListener::class,
             ],
             'aspects' => [

@@ -19,8 +19,8 @@ class SwitchManager
     {
     }
 
-    public function isEnabled(): bool
+    public function isEnable(string $key): bool
     {
-        return (bool) $this->config->get('telescope.enabled', false);
+        return (bool) $this->config->get("telescope.enable.{$key}", true);
     }
 }
