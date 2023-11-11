@@ -32,9 +32,6 @@ abstract class EntryController
 
     public function index()
     {
-        if (! $this->request->has('before')) {
-            return '';
-        }
         $before = $this->request->input('before');
         $limit = $this->request->input('take', 50);
         $tag = $this->request->input('tag');
