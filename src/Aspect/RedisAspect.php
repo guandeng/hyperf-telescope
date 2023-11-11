@@ -21,6 +21,9 @@ use Hyperf\Redis\Redis;
 use function Hyperf\Collection\collect;
 use function Hyperf\Tappable\tap;
 
+/**
+ * @property string $poolName
+ */
 class RedisAspect extends AbstractAspect
 {
     public array $classes = [
@@ -41,9 +44,10 @@ class RedisAspect extends AbstractAspect
 
             $arguments = $proceedingJoinPoint->arguments['keys'];
             $commands = $this->formatCommand($arguments['name'], $arguments['arguments']);
+            $connection = (fn () => $this->poolName ?? 'default')->call($proceedingJoinPoint->getInstance());
 
             Telescope::recordRedis(IncomingEntry::make([
-                'connection' => '', // to do
+                'connection' => $connection,
                 'command' => Telescope::getAppName() . $commands,
                 'time' => number_format((microtime(true) - $startTime) * 1000, 2, '.', ''),
             ]));
