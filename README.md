@@ -26,12 +26,12 @@ composer require guandeng/hyperf-telescope:dev-main
 php bin/hyperf.php vendor:publish guandeng/hyperf-telescope
 ```
 
-## listeners.php添加监听器(请求端)
+## 添加监听器(请求端)
 
 ```php
 <?php
 
-declare(strict_types=1);
+// config/autoload/listeners.php
 
 return [
     Guandeng\Telescope\Listener\RequestHandledListener::class,
@@ -39,12 +39,12 @@ return [
 
 ```
 
-## middlewares.php 添加中间件
+## 添加中间件
 
 ```php
 <?php
 
-declare(strict_types=1);
+// config/autoload/middlewares.php
 
 return [
     'grpc' => [
