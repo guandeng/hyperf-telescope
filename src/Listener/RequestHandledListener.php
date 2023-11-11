@@ -23,6 +23,7 @@ use Hyperf\HttpServer\Event\RequestTerminated;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Stringable\Str;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Swow\Psr7\Message\ResponsePlusInterface;
 
 class RequestHandledListener implements ListenerInterface
@@ -51,10 +52,7 @@ class RequestHandledListener implements ListenerInterface
         };
     }
 
-    /**
-     * @param RequestReceived|RequestTerminated $event
-     */
-    public function requestReceived($event)
+    public function requestReceived(RequestReceived $event)
     {
         $request = $event->request;
 
@@ -68,10 +66,7 @@ class RequestHandledListener implements ListenerInterface
         TelescopeContext::setBatchId($batchId);
     }
 
-    /**
-     * @param RequestTerminated $event
-     */
-    public function requestHandled($event)
+    public function requestHandled(RequestTerminated $event)
     {
         if (
             $event->response instanceof ResponsePlusInterface
@@ -112,7 +107,7 @@ class RequestHandledListener implements ListenerInterface
         }
     }
 
-    protected function incomingRequest($psr7Request): bool
+    protected function incomingRequest(ServerRequestInterface $psr7Request): bool
     {
         $target = $psr7Request->getRequestTarget();
 
@@ -165,7 +160,7 @@ class RequestHandledListener implements ListenerInterface
         return 'HTML Response';
     }
 
-    protected function contentWithinLimits($content)
+    protected function contentWithinLimits(string $content): bool
     {
         $limit = 64;
         return mb_strlen($content) / 1000 <= $limit;
@@ -173,12 +168,8 @@ class RequestHandledListener implements ListenerInterface
 
     /**
      * Hide the given parameters.
-     *
-     * @param array $data
-     * @param array $hidden
-     * @return mixed
      */
-    protected function hideParameters($data, $hidden)
+    protected function hideParameters(array $data, array $hidden): array
     {
         foreach ($hidden as $parameter) {
             if (Arr::get($data, $parameter)) {
