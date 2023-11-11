@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Guandeng\Telescope\Middleware;
 
-use Guandeng\Telescope\EntryType;
 use Guandeng\Telescope\IncomingEntry;
 use Guandeng\Telescope\SwitchManager;
 use Guandeng\Telescope\Telescope;
@@ -97,14 +96,6 @@ class TelescopeMiddleware implements MiddlewareInterface
                 Telescope::recordRequest($entry);
             }
         }
-    }
-
-    public function getType(ServerRequestInterface $psr7Request): string
-    {
-        if (Str::contains($psr7Request->getHeaderLine('content-type'), 'application/grpc')) {
-            return EntryType::SERVICE;
-        }
-        return EntryType::REQUEST;
     }
 
     protected function incomingRequest(ServerRequestInterface $psr7Request): bool

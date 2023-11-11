@@ -12,7 +12,7 @@ use function Hyperf\Support\env;
 
 return [
     'app' => [
-        'name' => env('APP_NAME', 'skeleton'),
+        'name' => env('APP_NAME', ''),
     ],
     'enable' => [
         'request' => env('TELESCOPE_ENABLE_REQUEST', true),
