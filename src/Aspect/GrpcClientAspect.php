@@ -17,7 +17,6 @@ use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\GrpcClient\GrpcClient;
 use Hyperf\GrpcClient\Request;
-use Throwable;
 
 class GrpcClientAspect extends AbstractAspect
 {
@@ -47,10 +46,7 @@ class GrpcClientAspect extends AbstractAspect
             $request->headers = array_merge($request->headers, $carrier);
             $proceedingJoinPoint->arguments['keys']['request'] = $request;
         }
-        try {
-            return $proceedingJoinPoint->process();
-        } catch (Throwable $e) {
-            throw $e;
-        }
+
+        return $proceedingJoinPoint->process();
     }
 }

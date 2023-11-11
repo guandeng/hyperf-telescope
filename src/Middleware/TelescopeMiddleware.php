@@ -99,7 +99,7 @@ class TelescopeMiddleware implements MiddlewareInterface
         }
     }
 
-    public function getType($psr7Request)
+    public function getType(ServerRequestInterface $psr7Request): string
     {
         if (Str::contains($psr7Request->getHeaderLine('content-type'), 'application/grpc')) {
             return EntryType::SERVICE;
@@ -107,7 +107,7 @@ class TelescopeMiddleware implements MiddlewareInterface
         return EntryType::REQUEST;
     }
 
-    protected function incomingRequest($psr7Request)
+    protected function incomingRequest(ServerRequestInterface $psr7Request): bool
     {
         $target = $psr7Request->getRequestTarget();
         if (Str::contains($target, '.ico')) {
@@ -121,7 +121,7 @@ class TelescopeMiddleware implements MiddlewareInterface
         return true;
     }
 
-    protected function response(ResponseInterface $response)
+    protected function response(ResponseInterface $response): string
     {
         $stream = $response->getBody();
         if ($stream->isSeekable()) {
@@ -156,7 +156,7 @@ class TelescopeMiddleware implements MiddlewareInterface
         return 'HTML Response';
     }
 
-    protected function contentWithinLimits($content)
+    protected function contentWithinLimits(string $content): bool
     {
         $limit = 64;
         return mb_strlen($content) / 1000 <= $limit;
@@ -164,12 +164,8 @@ class TelescopeMiddleware implements MiddlewareInterface
 
     /**
      * Hide the given parameters.
-     *
-     * @param array $data
-     * @param array $hidden
-     * @return mixed
      */
-    protected function hideParameters($data, $hidden)
+    protected function hideParameters(array $data, array $hidden): array
     {
         foreach ($hidden as $parameter) {
             if (Arr::get($data, $parameter)) {

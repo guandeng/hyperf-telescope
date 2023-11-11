@@ -62,7 +62,7 @@ class ExceptionHandlerListener implements ListenerInterface
         ]));
     }
 
-    protected function getContext($exception)
+    protected function getContext($exception): array
     {
         if (Str::contains($exception->getFile(), "eval()'d code")) {
             return [

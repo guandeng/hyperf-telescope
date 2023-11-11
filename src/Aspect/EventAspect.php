@@ -52,8 +52,8 @@ class EventAspect extends AbstractAspect
             }
             $ref = new ReflectionClass($event);
 
-            $contructor = $ref->getConstructor();
-            $payload = $contructor->getParameters();
+            $constructor = $ref->getConstructor();
+            $payload = $constructor->getParameters();
             $payload = $this->extractPayload($eventName, $payload);
 
             Telescope::recordEvent(IncomingEntry::make([
@@ -65,7 +65,7 @@ class EventAspect extends AbstractAspect
         });
     }
 
-    protected function extractPayload($eventName, $payload)
+    protected function extractPayload($eventName, $payload): array
     {
         return collect($payload)->map(function ($value) {
             return is_object($value) ? [
@@ -75,7 +75,7 @@ class EventAspect extends AbstractAspect
         })->toArray();
     }
 
-    protected function getListenerName($listener)
+    protected function getListenerName($listener): array
     {
         $listenerName = '[ERROR TYPE]';
         if (is_array($listener)) {
