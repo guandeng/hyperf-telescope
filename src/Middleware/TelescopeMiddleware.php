@@ -76,7 +76,7 @@ class TelescopeMiddleware implements MiddlewareInterface
                 'uri' => $psr7Request->getRequestTarget(),
                 'method' => $psr7Request->getMethod(),
                 'controller_action' => $dispatched->handler ? $dispatched->handler->callback : '',
-                'middleware' => '',// to do
+                'middleware' => '', // to do
                 'headers' => $psr7Request->getHeaders(),
                 'payload' => $psr7Request->getParsedBody(),
                 'session' => '',
