@@ -1,7 +1,9 @@
-### Hyperf-telescope
-hyperf版本的望远镜
+# Hyperf-telescope
 
-### 功能点
+hyperf 版本的望远镜
+
+## 功能点
+
 - [x] 记录request请求
 - [x] 记录异常错误
 - [x] 记录sql语句
@@ -12,14 +14,21 @@ hyperf版本的望远镜
 - [x] 记录event
 - [x] 记录http client
 
-### 安装组件
-`composer require guandeng/hyperf-telescope:dev-main`
+## 安装组件
 
-### 发布配置
-`php bin/hyperf.php vendor:publish guandeng/hyperf-telescope`
-
-### listeners.php添加监听器( 请求端)
+```shell
+composer require guandeng/hyperf-telescope:dev-main
 ```
+
+## 发布配置
+
+```shell
+php bin/hyperf.php vendor:publish guandeng/hyperf-telescope
+```
+
+## listeners.php添加监听器(请求端)
+
+```php
 <?php
 
 declare(strict_types=1);
@@ -29,8 +38,10 @@ return [
 ];
 
 ```
-### middlewares.php添加中间件
-```
+
+## middlewares.php 添加中间件
+
+```php
 <?php
 
 declare(strict_types=1);
@@ -43,8 +54,9 @@ return [
 
 ```
 
-# 修改.env
-```
+## 修改.env
+
+```env
 # telescope
 DB_TELESCOPE_CONNECTION=mysql
 DB_TELESCOPE_HOST=127.0.0.1
@@ -64,10 +76,10 @@ TELESCOPE_ENABLE_JOB=true
 TELESCOPE_ENABLE_DB=true
 TELESCOPE_ENABLE_GUZZLE=true
 ```
-### 访问地址
+
+## 访问地址
 
 `http://127.0.0.1:9501/telescope/requests`
-
 
 <img src="./requests.jpg">
 <img src="./grpc.jpg">
