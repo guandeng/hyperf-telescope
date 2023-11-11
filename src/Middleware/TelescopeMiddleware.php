@@ -17,6 +17,7 @@ use Guandeng\Telescope\SwitchManager;
 use Guandeng\Telescope\Telescope;
 use Guandeng\Telescope\TelescopeContext;
 use Hyperf\Collection\Arr;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Stringable\Str;
 use Psr\Http\Message\ResponseInterface;
@@ -28,8 +29,10 @@ use function Hyperf\Coroutine\defer;
 
 class TelescopeMiddleware implements MiddlewareInterface
 {
-    public function __construct(protected SwitchManager $switchManager)
-    {
+    public function __construct(
+        protected ConfigInterface $config,
+        protected SwitchManager $switchManager
+    ) {
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -67,16 +70,18 @@ class TelescopeMiddleware implements MiddlewareInterface
         $psr7Request = $request;
         $psr7Response = $response;
         $startTime = $psr7Request->getServerParams()['request_time_float'];
+
         if ($this->incomingRequest($psr7Request)) {
             /** @var Dispatched $dispatched */
             $dispatched = $psr7Request->getAttribute(Dispatched::class);
+            $middlewares = $this->config->get('middlewares.' . ($dispatched->serverName ?? 'http'), []);
 
             $entry = IncomingEntry::make([
                 'ip_address' => $psr7Request->getServerParams()['remote_addr'],
                 'uri' => $psr7Request->getRequestTarget(),
                 'method' => $psr7Request->getMethod(),
                 'controller_action' => $dispatched->handler ? $dispatched->handler->callback : '',
-                'middleware' => '', // to do
+                'middleware' => $middlewares,
                 'headers' => $psr7Request->getHeaders(),
                 'payload' => $psr7Request->getParsedBody(),
                 'session' => '',
