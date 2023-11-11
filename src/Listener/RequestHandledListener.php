@@ -82,7 +82,7 @@ class RequestHandledListener implements ListenerInterface
 
         $psr7Request = $event->request;
         $psr7Response = $event->response;
-        $middlewares = $this->config->get('middlewares.' . $event->server, []);
+        $middlewares = $this->config->get('middlewares.' . ($event->server ?? 'http'), []);
         $startTime = $psr7Request->getServerParams()['request_time_float'];
 
         if ($this->incomingRequest($psr7Request)) {
@@ -90,7 +90,7 @@ class RequestHandledListener implements ListenerInterface
             $dispatched = $psr7Request->getAttribute(Dispatched::class);
 
             $entry = IncomingEntry::make([
-                'ip_address' => $psr7Request->getServerParams()['remote_addr'],
+                'ip_address' => $psr7Request->getServerParams()['remote_addr'] ?? 'unknown',
                 'uri' => $psr7Request->getRequestTarget(),
                 'method' => $psr7Request->getMethod(),
                 'controller_action' => $dispatched->handler ? $dispatched->handler->callback : '',
