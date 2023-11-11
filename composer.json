@@ -28,7 +28,8 @@
         "hyperf/db-connection": "~3.0.0",
         "hyperf/redis": "~3.0.0",
         "monolog/monolog": "^2.0",
-        "hyperf/grpc-client": "~3.0.0"
+        "hyperf/grpc-client": "~3.0.0",
+        "swoole/ide-helper": "dev-master"
     },
     "autoload": {
         "psr-4": {
