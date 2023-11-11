@@ -51,7 +51,7 @@ class LogAspect extends AbstractAspect
             }
             Telescope::recordLog(
                 IncomingEntry::make([
-                    'level' => $level,
+                    'level' => (string) $this->getLogLevel($level),
                     'message' => Telescope::getAppName() . $message,
                     'context' => $context,
                 ])

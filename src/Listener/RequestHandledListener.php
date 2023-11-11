@@ -122,7 +122,7 @@ class RequestHandledListener implements ListenerInterface
         return true;
     }
 
-    protected function response(ResponseInterface $response): string
+    protected function response(ResponseInterface $response): string|array
     {
         $stream = $response->getBody();
 
@@ -142,7 +142,7 @@ class RequestHandledListener implements ListenerInterface
             ) {
                 return $this->contentWithinLimits($content)
                 ? $this->hideParameters(json_decode($content, true), Telescope::$hiddenResponseParameters)
-                : 'Purged By Telescope';
+                : 'Purged By Hyperf Telescope';
             }
             if (Str::startsWith(strtolower($response->getHeaderLine('content-type') ?? ''), 'text/plain')) {
                 return $this->contentWithinLimits($content) ? $content : 'Purged By Hyperf Telescope';
