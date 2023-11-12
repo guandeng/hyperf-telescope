@@ -54,6 +54,8 @@ return [
 
 ```
 
+> TelescopeMiddleware 与 RequestHandledListener，二选一即可。
+
 ## 修改.env
 
 ```env
