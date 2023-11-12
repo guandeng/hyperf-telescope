@@ -23,27 +23,27 @@ class IncomingEntry
     /**
      * The entry's UUID.
      */
-    public string $uuid;
+    public string $uuid = '';
 
     /**
      * The entry's batch ID.
      */
-    public string $batchId;
+    public string $batchId = '';
 
     /**
      * The entry's sub batch ID.
      */
-    public string $subBatchId;
+    public string $subBatchId = '';
 
     /**
      * The entry's type.
      */
-    public string $type;
+    public string $type = '';
 
     /**
      * The entry's family hash.
      */
-    public ?string $familyHash;
+    public ?string $familyHash = null;
 
     /**
      * The currently authenticated user, if applicable.
@@ -63,7 +63,7 @@ class IncomingEntry
     /**
      * The DateTime that indicates when the entry was recorded.
      */
-    public string $recordedAt;
+    public string $recordedAt = '';
 
     /**
      * Create a new incoming entry instance.
@@ -273,6 +273,7 @@ class IncomingEntry
      */
     public function toArray(): array
     {
+        var_dump($this->familyHash);
         return [
             'uuid' => $this->uuid,
             'batch_id' => $this->batchId,
