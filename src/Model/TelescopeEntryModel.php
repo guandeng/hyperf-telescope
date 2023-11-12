@@ -11,8 +11,6 @@ declare(strict_types=1);
 
 namespace Guandeng\Telescope\Model;
 
-use Hyperf\DbConnection\Model\Model;
-
 class TelescopeEntryModel extends Model
 {
     /**
@@ -31,11 +29,6 @@ class TelescopeEntryModel extends Model
      * The table associated with the model.
      */
     protected ?string $table = 'telescope_entries';
-
-    /**
-     * connection name.
-     */
-    protected ?string $connection = 'telescope';
 
     /**
      * The attributes that are mass assignable.

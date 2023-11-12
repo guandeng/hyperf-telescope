@@ -11,18 +11,12 @@ declare(strict_types=1);
 
 namespace Guandeng\Telescope\Model;
 
-use Hyperf\DbConnection\Model\Model;
+use function Hyperf\Config\config;
 
-class TelescopeEntryTagModel extends Model
+abstract class Model extends \Hyperf\DbConnection\Model\Model
 {
-    public const CREATED_AT = null;
-
-    public const UPDATED_AT = null;
-
-    protected ?string $table = 'telescope_entries_tags';
-
-    protected array $fillable = [
-        'entry_uuid',
-        'tag',
-    ];
+    public function getConnectionName()
+    {
+        return config('telescope.database.connection', 'default');
+    }
 }
