@@ -35,7 +35,7 @@ abstract class EntryController
         $before = $this->request->input('before');
         $limit = $this->request->input('take', 50);
         $tag = $this->request->input('tag');
-        $query = (new TelescopeEntryModel())->setTelescopeConnection()->where('type', $this->entryType())->orderByDesc('sequence');
+        $query = TelescopeEntryModel::where('type', $this->entryType())->orderByDesc('sequence');
 
         if ($before) {
             $query->where('sequence', '<', $before);
@@ -61,10 +61,10 @@ abstract class EntryController
 
     public function show($id)
     {
-        $entry = (new TelescopeEntryModel())->setTelescopeConnection()->find($id);
-        $entry->tags = (new TelescopeEntryTagModel())->setTelescopeConnection()->where('entry_uuid', $id)->pluck('tag')->toArray();
+        $entry = TelescopeEntryModel::find($id);
+        $entry->tags = TelescopeEntryTagModel::where('entry_uuid', $id)->pluck('tag')->toArray();
 
-        $query = (new TelescopeEntryModel())->setTelescopeConnection()->where('batch_id', $entry->batch_id);
+        $query = TelescopeEntryModel::where('batch_id', $entry->batch_id);
         if ($this->entryType() == EntryType::SERVICE) {
             $query->where('sub_batch_id', $entry->sub_batch_id);
         }

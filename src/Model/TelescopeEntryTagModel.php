@@ -27,10 +27,4 @@ class TelescopeEntryTagModel extends Model
         'entry_uuid',
         'tag',
     ];
-
-    public function setTelescopeConnection()
-    {
-        $this->setConnection(config('telescope.database.connection', 'default'));
-        return $this;
-    }
 }

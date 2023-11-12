@@ -11,8 +11,6 @@ declare(strict_types=1);
 
 namespace Guandeng\Telescope\Model;
 
-use Hyperf\DbConnection\Model\Model;
-
 use function Hyperf\Config\config;
 
 class TelescopeEntryModel extends Model
@@ -71,11 +69,5 @@ class TelescopeEntryModel extends Model
     public function getIdAttribute()
     {
         return $this->uuid;
-    }
-
-    public function setTelescopeConnection()
-    {
-        $this->setConnection(config('telescope.database.connection', 'default'));
-        return $this;
     }
 }

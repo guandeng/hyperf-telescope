@@ -329,8 +329,8 @@ class IncomingEntry
                 'entry_uuid' => $this->uuid,
                 'tag' => $tag,
             ];
-            (new TelescopeEntryTagModel())->setTelescopeConnection()->create($tagItem);
+            TelescopeEntryTagModel::create($tagItem);
         }
-        (new TelescopeEntryModel())->setTelescopeConnection()->create($this->toArray());
+        TelescopeEntryModel::create($this->toArray());
     }
 }
