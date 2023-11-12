@@ -18,13 +18,9 @@ use Symfony\Component\Console\Output\NullOutput;
 
 class InstallCommand extends Command
 {
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
         parent::__construct('telescope:install');
-
-        $this->container = $container;
     }
 
     public function handle()
