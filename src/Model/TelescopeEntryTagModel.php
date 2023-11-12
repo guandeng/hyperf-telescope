@@ -30,7 +30,7 @@ class TelescopeEntryTagModel extends Model
 
     public function setTelescopeConnection()
     {
-        $this->setConnection(config('telescope.database.connection'));
+        $this->setConnection(config('telescope.database.connection', 'default'));
         return $this;
     }
 }
