@@ -121,52 +121,52 @@ class Telescope
      */
     public static $runsMigrations = true;
 
-    public static function recordCache(IncomingEntry $entry)
+    public static function recordCache(IncomingEntry $entry): void
     {
         static::record(EntryType::CACHE, $entry);
     }
 
-    public static function recordCommand(IncomingEntry $entry)
+    public static function recordCommand(IncomingEntry $entry): void
     {
         static::record(EntryType::COMMAND, $entry);
     }
 
-    public static function recordEvent(IncomingEntry $entry)
+    public static function recordEvent(IncomingEntry $entry): void
     {
         static::record(EntryType::EVENT, $entry);
     }
 
-    public static function recordException(IncomingEntry $entry)
+    public static function recordException(IncomingEntry $entry): void
     {
         static::record(EntryType::EXCEPTION, $entry);
     }
 
-    public static function recordLog(IncomingEntry $entry)
+    public static function recordLog(IncomingEntry $entry): void
     {
         static::record(EntryType::LOG, $entry);
     }
 
-    public static function recordQuery(IncomingEntry $entry)
+    public static function recordQuery(IncomingEntry $entry): void
     {
         static::record(EntryType::QUERY, $entry);
     }
 
-    public static function recordRedis(IncomingEntry $entry)
+    public static function recordRedis(IncomingEntry $entry): void
     {
         static::record(EntryType::REDIS, $entry);
     }
 
-    public static function recordRequest(IncomingEntry $entry)
+    public static function recordRequest(IncomingEntry $entry): void
     {
         static::record(EntryType::REQUEST, $entry);
     }
 
-    public static function recordService(IncomingEntry $entry)
+    public static function recordService(IncomingEntry $entry): void
     {
         static::record(EntryType::SERVICE, $entry);
     }
 
-    public static function recordClientRequest(IncomingEntry $entry)
+    public static function recordClientRequest(IncomingEntry $entry): void
     {
         static::record(EntryType::CLIENT_REQUEST, $entry);
     }
@@ -185,7 +185,7 @@ class Telescope
         return $config->get('telescope.query_slow', 50);
     }
 
-    protected static function record(string $type, IncomingEntry $entry)
+    protected static function record(string $type, IncomingEntry $entry): void
     {
         $batchId = (string) TelescopeContext::getBatchId();
         $subBatchId = (string) TelescopeContext::getSubBatchId();

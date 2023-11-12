@@ -89,7 +89,7 @@ final class Severity implements Stringable
     /**
      * @var string The value of this enum instance
      */
-    private $value;
+    private string $value;
 
     /**
      * Constructor.

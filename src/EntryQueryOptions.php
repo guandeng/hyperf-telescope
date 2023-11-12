@@ -18,53 +18,39 @@ class EntryQueryOptions
 {
     /**
      * The batch ID that entries should belong to.
-     *
-     * @var string
      */
-    public $batchId;
+    public string $batchId;
 
     /**
      * The tag that must belong to retrieved entries.
-     *
-     * @var string
      */
-    public $tag;
+    public string $tag;
 
     /**
      * The family hash that must belong to retrieved entries.
-     *
-     * @var string
      */
-    public $familyHash;
+    public string $familyHash;
 
     /**
      * The ID that all retrieved entries should be less than.
-     *
-     * @var mixed
      */
-    public $beforeSequence;
+    public mixed $beforeSequence;
 
     /**
      * The list of UUIDs of entries tor retrieve.
-     *
-     * @var mixed
      */
-    public $uuids;
+    public mixed $uuids;
 
     /**
      * The number of entries to retrieve.
-     *
-     * @var int
      */
-    public $limit = 50;
+    public int $limit = 50;
 
     /**
      * Create new entry query options from the incoming request.
      * @param Request $request
-     *
-     * @return static
      */
-    public static function fromRequest(ServerRequestInterface $request)
+    public static function fromRequest(ServerRequestInterface $request): static
     {
         return (new static())
             ->batchId($request->input('batch_id'))
@@ -77,10 +63,8 @@ class EntryQueryOptions
 
     /**
      * Create new entry query options for the given batch ID.
-     *
-     * @return static
      */
-    public static function forBatchId(?string $batchId)
+    public static function forBatchId(?string $batchId): static
     {
         return (new static())->batchId($batchId);
     }
@@ -90,7 +74,7 @@ class EntryQueryOptions
      *
      * @return $this
      */
-    public function batchId(?string $batchId)
+    public function batchId(?string $batchId): static
     {
         $this->batchId = $batchId;
 
@@ -102,7 +86,7 @@ class EntryQueryOptions
      *
      * @return $this
      */
-    public function uuids(?array $uuids)
+    public function uuids(?array $uuids): static
     {
         $this->uuids = $uuids;
 
@@ -115,7 +99,7 @@ class EntryQueryOptions
      * @param mixed $id
      * @return $this
      */
-    public function beforeSequence($id)
+    public function beforeSequence($id): static
     {
         $this->beforeSequence = $id;
 
@@ -127,7 +111,7 @@ class EntryQueryOptions
      *
      * @return $this
      */
-    public function tag(?string $tag)
+    public function tag(?string $tag): static
     {
         $this->tag = $tag;
 
@@ -139,7 +123,7 @@ class EntryQueryOptions
      *
      * @return $this
      */
-    public function familyHash(?string $familyHash)
+    public function familyHash(?string $familyHash): static
     {
         $this->familyHash = $familyHash;
 
@@ -151,7 +135,7 @@ class EntryQueryOptions
      *
      * @return $this
      */
-    public function limit(int $limit)
+    public function limit(int $limit): static
     {
         $this->limit = $limit;
 
