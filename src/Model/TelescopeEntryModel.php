@@ -11,8 +11,6 @@ declare(strict_types=1);
 
 namespace Guandeng\Telescope\Model;
 
-use function Hyperf\Config\config;
-
 class TelescopeEntryModel extends Model
 {
     /**

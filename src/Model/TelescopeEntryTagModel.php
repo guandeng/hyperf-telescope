@@ -13,8 +13,6 @@ namespace Guandeng\Telescope\Model;
 
 use Hyperf\DbConnection\Model\Model;
 
-use function Hyperf\Config\config;
-
 class TelescopeEntryTagModel extends Model
 {
     public const CREATED_AT = null;
