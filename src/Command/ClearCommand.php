@@ -15,21 +15,20 @@ use Hyperf\Command\Command;
 use Hyperf\DbConnection\Db;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Config\config;
+
 class ClearCommand extends Command
 {
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
         parent::__construct('telescope:clear');
-
-        $this->container = $container;
     }
 
     public function handle()
     {
-        Db::connection('telescope')->table('telescope_entries')->truncate();
-        Db::connection('telescope')->table('telescope_entries_tags')->truncate();
-        Db::connection('telescope')->table('telescope_monitoring')->truncate();
+        $connection = config('telescope.database.connection');
+        Db::connection($connection)->table('telescope_entries')->truncate();
+        Db::connection($connection)->table('telescope_entries_tags')->truncate();
+        Db::connection($connection)->table('telescope_monitoring')->truncate();
     }
 }

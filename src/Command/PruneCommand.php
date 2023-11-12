@@ -16,28 +16,28 @@ use Hyperf\Command\Command;
 use Hyperf\DbConnection\Db;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Config\config;
+
 class PruneCommand extends Command
 {
-    protected $container;
-
     protected ?string $signature = 'telescope:prune {--hours=24 : The number of hours to retain Telescope data}';
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
         parent::__construct();
     }
 
     public function handle()
     {
+        $connection = config('telescope.database.connection');
         $created_at = Carbon::now()->subHours($this->input->getOption('hours'));
-        Db::connection('telescope')->table('telescope_entries')
+        Db::connection($connection)->table('telescope_entries')
             ->where('created_at', '<', $created_at)
             ->delete();
-        Db::connection('telescope')
+        Db::connection($connection)
             ->table('telescope_entries_tags')
             ->delete();
-        Db::connection('telescope')
+        Db::connection($connection)
             ->table('telescope_monitoring')
             ->delete();
     }
