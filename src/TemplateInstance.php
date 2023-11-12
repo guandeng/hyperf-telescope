@@ -15,20 +15,18 @@ use Exception;
 
 class TemplateInstance
 {
-    protected $view_path;
-
-    public function __construct($viewPath)
+    public function __construct(protected string $viewPath)
     {
-        $this->view_path = $viewPath;
     }
 
     public function render($template, $data)
     {
-        $loadFile = $this->view_path . $template . '.blade.php';
-        if (! file_exists($loadFile)) {
-            throw new Exception($loadFile . 'is not found');
+        $templateFile = $this->viewPath . $template . '.blade.php';
+
+        if (! file_exists($templateFile)) {
+            throw new Exception($templateFile . 'is not found');
         }
 
-        return file_get_contents($loadFile);
+        return file_get_contents($templateFile);
     }
 }
