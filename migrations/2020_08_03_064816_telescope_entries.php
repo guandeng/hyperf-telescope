@@ -12,6 +12,8 @@ use Hyperf\Database\Migrations\Migration;
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Schema;
 
+use function Hyperf\Config\config;
+
 class TelescopeEntries extends Migration
 {
     /**
@@ -59,5 +61,13 @@ class TelescopeEntries extends Migration
         Schema::dropIfExists('telescope_entries_tags');
         Schema::dropIfExists('telescope_entries');
         Schema::dropIfExists('telescope_monitoring');
+    }
+
+    /**
+     * Get the migration connection name.
+     */
+    public function getConnection(): string
+    {
+        return config('telescope.database.connection', 'default');
     }
 }
