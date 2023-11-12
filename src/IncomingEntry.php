@@ -16,6 +16,7 @@ use Guandeng\Telescope\Model\TelescopeEntryModel;
 use Guandeng\Telescope\Model\TelescopeEntryTagModel;
 use Hyperf\Stringable\Str;
 
+use function Hyperf\Config\config;
 use function Hyperf\Support\env;
 
 class IncomingEntry
@@ -90,7 +91,7 @@ class IncomingEntry
     {
         $this->uuid = (string) Str::orderedUuid()->toString();
 
-        $timezone = env('TELESCOPE_TIMEZONE') ?: date_default_timezone_get();
+        $timezone = config('telescope.timezone') ?: date_default_timezone_get();
         $this->recordedAt = Carbon::now()->setTimezone($timezone)->toDateTimeString();
 
         $this->content = array_merge($content, ['hostname' => gethostname()]);
