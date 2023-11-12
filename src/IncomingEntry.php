@@ -17,7 +17,6 @@ use Guandeng\Telescope\Model\TelescopeEntryTagModel;
 use Hyperf\Stringable\Str;
 
 use function Hyperf\Config\config;
-use function Hyperf\Support\env;
 
 class IncomingEntry
 {
