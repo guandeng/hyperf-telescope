@@ -16,72 +16,54 @@ use Guandeng\Telescope\Model\TelescopeEntryModel;
 use Guandeng\Telescope\Model\TelescopeEntryTagModel;
 use Hyperf\Stringable\Str;
 
-use function Hyperf\Support\env;
+use function Hyperf\Config\config;
 
 class IncomingEntry
 {
     /**
      * The entry's UUID.
-     *
-     * @var string
      */
-    public $uuid;
+    public string $uuid;
 
     /**
      * The entry's batch ID.
-     *
-     * @var string
      */
-    public $batchId;
+    public string $batchId;
 
     /**
      * The entry's sub batch ID.
-     *
-     * @var string
      */
-    public $subBatchId;
+    public string $subBatchId;
 
     /**
      * The entry's type.
-     *
-     * @var string
      */
-    public $type;
+    public string $type;
 
     /**
      * The entry's family hash.
-     *
-     * @var string|null
      */
-    public $familyHash;
+    public ?string $familyHash;
 
     /**
      * The currently authenticated user, if applicable.
-     *
-     * @var mixed
      */
-    public $user;
+    public mixed $user;
 
     /**
      * The entry's content.
-     *
-     * @var array
      */
-    public $content = [];
+    public array $content = [];
 
     /**
      * The entry's tags.
-     *
-     * @var array
      */
-    public $tags = [];
+    public array $tags = [];
 
     /**
      * The DateTime that indicates when the entry was recorded.
-     *
-     * @var string
      */
-    public $recordedAt;
+    public string $recordedAt;
 
     /**
      * Create a new incoming entry instance.
@@ -90,7 +72,7 @@ class IncomingEntry
     {
         $this->uuid = (string) Str::orderedUuid()->toString();
 
-        $timezone = env('TELESCOPE_TIMEZONE') ?: date_default_timezone_get();
+        $timezone = config('telescope.timezone') ?: date_default_timezone_get();
         $this->recordedAt = Carbon::now()->setTimezone($timezone)->toDateTimeString();
 
         $this->content = array_merge($content, ['hostname' => gethostname()]);
@@ -113,7 +95,7 @@ class IncomingEntry
      *
      * @return $this
      */
-    public function batchId(string $batchId)
+    public function batchId(string $batchId): static
     {
         $this->batchId = $batchId;
 
@@ -125,7 +107,7 @@ class IncomingEntry
      *
      * @return $this
      */
-    public function subBatchId(string $batchId)
+    public function subBatchId(string $batchId): static
     {
         $this->subBatchId = $batchId;
 
@@ -137,7 +119,7 @@ class IncomingEntry
      *
      * @return $this
      */
-    public function type(string $type)
+    public function type(string $type): static
     {
         $this->type = $type;
 
@@ -153,7 +135,7 @@ class IncomingEntry
      *
      * @return $this
      */
-    public function withFamilyHash(string $familyHash)
+    public function withFamilyHash(string $familyHash): static
     {
         $this->familyHash = $familyHash;
 
@@ -166,7 +148,7 @@ class IncomingEntry
      * @param \Illuminate\Contracts\Auth\Authenticatable $user
      * @return $this
      */
-    public function user($user = null)
+    public function user($user = null): static
     {
         $authUser = null;
         if (function_exists('auth')) {
@@ -201,7 +183,7 @@ class IncomingEntry
      *
      * @return $this
      */
-    public function tags(array $tags)
+    public function tags(array $tags): static
     {
         $this->tags = array_unique(array_merge($this->tags, $tags));
 
@@ -210,10 +192,8 @@ class IncomingEntry
 
     /**
      * Determine if the incoming entry has a monitored tag.
-     *
-     * @return bool
      */
-    public function hasMonitoredTag()
+    public function hasMonitoredTag(): bool
     {
         // if (! empty($this->tags)) {
         //     return app(EntriesRepository::class)->isMonitoring($this->tags);
@@ -224,10 +204,8 @@ class IncomingEntry
 
     /**
      * Determine if the incoming entry is a failed request.
-     *
-     * @return bool
      */
-    public function isFailedRequest()
+    public function isFailedRequest(): bool
     {
         return $this->type === EntryType::REQUEST
             && ($this->content['response_status'] ?? 200) >= 500;
@@ -235,20 +213,16 @@ class IncomingEntry
 
     /**
      * Determine if the incoming entry is a query.
-     *
-     * @return bool
      */
-    public function isQuery()
+    public function isQuery(): bool
     {
         return $this->type === EntryType::QUERY;
     }
 
     /**
      * Determine if the incoming entry is a failed job.
-     *
-     * @return bool
      */
-    public function isFailedJob()
+    public function isFailedJob(): bool
     {
         return $this->type === EntryType::JOB
             && ($this->content['status'] ?? null) === 'failed';
@@ -256,60 +230,48 @@ class IncomingEntry
 
     /**
      * Determine if the incoming entry is a reportable exception.
-     *
-     * @return bool
      */
-    public function isReportableException()
+    public function isReportableException(): bool
     {
         return false;
     }
 
     /**
      * Determine if the incoming entry is an exception.
-     *
-     * @return bool
      */
-    public function isException()
+    public function isException(): bool
     {
         return false;
     }
 
     /**
      * Determine if the incoming entry is a dump.
-     *
-     * @return bool
      */
-    public function isDump()
+    public function isDump(): bool
     {
         return false;
     }
 
     /**
      * Determine if the incoming entry is a scheduled task.
-     *
-     * @return bool
      */
-    public function isScheduledTask()
+    public function isScheduledTask(): bool
     {
         return $this->type === EntryType::SCHEDULED_TASK;
     }
 
     /**
      * Get the family look-up hash for the incoming entry.
-     *
-     * @return string|null
      */
-    public function familyHash()
+    public function familyHash(): ?string
     {
         return $this->familyHash;
     }
 
     /**
      * Get an array representation of the entry for storage.
-     *
-     * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'uuid' => $this->uuid,
