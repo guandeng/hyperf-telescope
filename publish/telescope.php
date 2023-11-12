@@ -28,4 +28,7 @@ return [
     ],
     'timezone' => env('TELESCOPE_TIMEZONE', 'Asia/Shanghai'),
     'query_slow' => env('TELESCOPE_QUERY_SLOW', 50),
+    'database' => [
+        'connection' => env('TELESCOPE_DB_CONNECTION', 'default'),
+    ],
 ];

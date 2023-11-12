@@ -11,8 +11,6 @@ declare(strict_types=1);
 
 namespace Guandeng\Telescope;
 
-use function Hyperf\Support\env;
-
 class ConfigProvider
 {
     public function __invoke(): array
@@ -66,27 +64,6 @@ class ConfigProvider
                     'description' => 'The configuration file for hyperf telescope',
                     'source' => __DIR__ . '/../publish/telescope.php',
                     'destination' => BASE_PATH . '/config/autoload/telescope.php',
-                ],
-            ],
-            'databases' => [
-                'telescope' => [
-                    'driver' => env('DB_TELESCOPE_CONNECTION', 'mysql'),
-                    'host' => env('DB_TELESCOPE_HOST', 'localhost'),
-                    'database' => env('DB_TELESCOPE_DATABASE', 'hyperf'),
-                    'port' => env('DB_TELESCOPE_PORT', 3306),
-                    'username' => env('DB_TELESCOPE_USERNAME', 'root'),
-                    'password' => env('DB_TELESCOPE_PASSWORD', ''),
-                    'charset' => env('DB_TELESCOPE_CHARSET', 'utf8'),
-                    'collation' => env('DB_TELESCOPE_COLLATION', 'utf8_unicode_ci'),
-                    'prefix' => env('DB_TELESCOPE_PREFIX', ''),
-                    'pool' => [
-                        'min_connections' => env('TELESCOPE_MIN_CONNECTIONS', 1),
-                        'max_connections' => env('TELESCOPE_MAX_CONNECTIONS', 128),
-                        'connect_timeout' => 10.0,
-                        'wait_timeout' => 3.0,
-                        'heartbeat' => -1,
-                        'max_idle_time' => (float) env('DB_MAX_IDLE_TIME', 60),
-                    ],
                 ],
             ],
         ];
