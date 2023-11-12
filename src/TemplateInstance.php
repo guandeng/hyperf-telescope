@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Guandeng\Telescope;
 
-use Exception;
+use Hyperf\View\Exception\RenderException;
 
 class TemplateInstance
 {
@@ -24,7 +24,7 @@ class TemplateInstance
         $templateFile = $this->viewPath . $template . '.blade.php';
 
         if (! file_exists($templateFile)) {
-            throw new Exception($templateFile . 'is not found');
+            throw new RenderException($templateFile . ' is not found.');
         }
 
         return file_get_contents($templateFile);

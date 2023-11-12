@@ -13,13 +13,12 @@ namespace Guandeng\Telescope;
 
 use Hyperf\View\Engine\EngineInterface;
 
+use function Hyperf\Support\make;
+
 class TemplateEngine implements EngineInterface
 {
-    public function render($template, $data, $config): string
+    public function render(string $template, array $data, array $config): string
     {
-        // 实例化对应的模板引擎的实例
-        $engine = new TemplateInstance($config['view_path']);
-        // 并调用对应的渲染方法
-        return $engine->render($template, $data);
+        return make(TemplateInstance::class, [$config['view_path']])->render($template, $data);
     }
 }
