@@ -182,7 +182,7 @@ class Telescope
     {
         $container = ApplicationContext::getContainer();
         $config = $container->get(ConfigInterface::class);
-        return $config->get('telescope.query_slow', 50);
+        return $config->get('telescope.database.query_slow', 50);
     }
 
     protected static function record(string $type, IncomingEntry $entry): void
