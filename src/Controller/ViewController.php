@@ -50,6 +50,7 @@ class ViewController
             'app.js' => [__DIR__ . '/../../public/vendor/telescope/app.js', 'application/javascript'],
             'app.css' => [__DIR__ . '/../../public/vendor/telescope/app.css', 'text/css'],
             'app-dark.css' => [__DIR__ . '/../../public/vendor/telescope/app-dark.css', 'text/css'],
+            'favicon.ico' => [__DIR__ . '/../../public/vendor/telescope/favicon.ico', 'image/x-icon'],
         ];
 
         static $caches = [];
