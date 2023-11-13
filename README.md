@@ -1,4 +1,4 @@
-⚠️ This repository has been archived and is no longer actively maintained. The code has been moved to [https://github.com/friendsofhyperf/components](https://github.com/friendsofhyperf/components).
+⚠️ This repository has been archived and is no longer actively maintained. The code has been moved to [https://github.com/friendsofhyperf/telescope](https://github.com/friendsofhyperf/telescope).
 
 
 # Hyperf-telescope
