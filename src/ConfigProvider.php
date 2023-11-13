@@ -45,13 +45,6 @@ class ConfigProvider
                     'cache_path' => BASE_PATH . '/runtime/view/',
                 ],
             ],
-            'server' => [
-                'settings' => [
-                    // 静态资源
-                    'document_root' => BASE_PATH . '/vendor/guandeng/hyperf-telescope/public',
-                    'enable_static_handler' => true,
-                ],
-            ],
             'annotations' => [
                 'scan' => [
                     'paths' => [
