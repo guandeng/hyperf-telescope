@@ -38,7 +38,7 @@ class SetupTelescopeServerListener implements ListenerInterface
         }
 
         $host = $this->config->get('telescope.server.host', '0.0.0.0');
-        $port = (int) $this->config->get('telescope.server.port', 9501);
+        $port = (int) $this->config->get('telescope.server.port', 9509);
         $servers = $this->config->get('server.servers');
 
         $servers[] = [
