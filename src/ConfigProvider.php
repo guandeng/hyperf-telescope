@@ -37,14 +37,6 @@ class ConfigProvider
                 Aspect\EventAspect::class,
                 Aspect\HttpClientAspect::class,
             ],
-            'view' => [
-                'engine' => TemplateEngine::class,
-                'mode' => \Hyperf\View\Mode::SYNC,
-                'config' => [
-                    'view_path' => BASE_PATH . '/vendor/guandeng/hyperf-telescope/storage/view/',
-                    'cache_path' => BASE_PATH . '/runtime/view/',
-                ],
-            ],
             'annotations' => [
                 'scan' => [
                     'paths' => [

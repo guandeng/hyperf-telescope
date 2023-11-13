@@ -16,7 +16,6 @@ use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\GetMapping;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
-use Hyperf\View\RenderInterface;
 use Psr\Container\ContainerInterface;
 
 #[Controller(server: 'telescope')]
@@ -31,16 +30,30 @@ class ViewController
     #[Inject]
     protected ResponseInterface $response;
 
+    private array $caches = [];
+
     #[GetMapping(path: '/telescope/{view}')]
-    public function index(RenderInterface $render)
+    public function index()
     {
-        return $render->render('index');
+        $blade = __DIR__ . '/../../storage/view/index.blade.php';
+
+        if (! isset($this->caches[$blade])) {
+            $this->caches[$blade] = file_get_contents($blade);
+        }
+
+        return $this->response->html($this->caches[$blade]);
     }
 
     #[GetMapping(path: '/telescope/{view}/{id}')]
-    public function show(RenderInterface $render)
+    public function show()
     {
-        return $render->render('index');
+        $blade = __DIR__ . '/../../storage/view/index.blade.php';
+
+        if (! isset($this->caches[$blade])) {
+            $this->caches[$blade] = file_get_contents($blade);
+        }
+
+        return $this->response->html($this->caches[$blade]);
     }
 
     #[GetMapping(path: '/vendor/telescope/{file}')]
@@ -53,16 +66,14 @@ class ViewController
             'favicon.ico' => [__DIR__ . '/../../public/vendor/telescope/favicon.ico', 'image/x-icon'],
         ];
 
-        static $caches = [];
-
-        if (! isset($caches[$file])) {
+        if (! isset($this->caches[$file])) {
             if (! isset($files[$file]) || ! file_exists($files[$file][0])) {
                 return $this->response->raw('')->withStatus(404);
             }
 
-            $caches[$file] = (string) file_get_contents($files[$file][0]);
+            $this->caches[$file] = (string) file_get_contents($files[$file][0]);
         }
 
-        return $this->response->raw($caches[$file])->withHeader('Content-Type', $files[$file][1]);
+        return $this->response->raw($this->caches[$file])->withHeader('Content-Type', $files[$file][1]);
     }
 }
