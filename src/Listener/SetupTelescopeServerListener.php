@@ -33,6 +33,10 @@ class SetupTelescopeServerListener implements ListenerInterface
 
     public function process(object $event): void
     {
+        if (! $this->config->get('telescope.server.enable', false)) {
+            return;
+        }
+
         $host = $this->config->get('telescope.server.host', '0.0.0.0');
         $port = (int) $this->config->get('telescope.server.port', 9501);
         $servers = $this->config->get('server.servers');
