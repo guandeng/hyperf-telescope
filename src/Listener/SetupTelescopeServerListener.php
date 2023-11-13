@@ -46,6 +46,7 @@ class SetupTelescopeServerListener implements ListenerInterface
             'type' => ServerInterface::SERVER_HTTP,
             'host' => $host,
             'port' => $port,
+            'sock_type' => SWOOLE_SOCK_TCP,
             'callbacks' => [
                 Event::ON_REQUEST => [Server::class, 'onRequest'],
             ],
