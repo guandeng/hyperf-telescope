@@ -28,6 +28,7 @@ class ConfigProvider
                 Listener\CommandListener::class,
                 Listener\DbQueryListener::class,
                 Listener\ExceptionHandlerListener::class,
+                Listener\SetupTelescopeServerListener::class,
             ],
             'aspects' => [
                 Aspect\GrpcClientAspect::class,

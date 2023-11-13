@@ -31,4 +31,8 @@ return [
     'database' => [
         'connection' => env('TELESCOPE_DB_CONNECTION', 'default'),
     ],
+    'server' => [
+        'host' => env('TELESCOPE_SERVER_HOST', '0.0.0.0'),
+        'port' => (int) env('TELESCOPE_SERVER_PORT', 9509),
+    ],
 ];

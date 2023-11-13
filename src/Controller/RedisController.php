@@ -16,7 +16,7 @@ use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\GetMapping;
 use Hyperf\HttpServer\Annotation\PostMapping;
 
-#[Controller]
+#[Controller(server: 'telescope')]
 class RedisController extends EntryController
 {
     #[PostMapping(path: '/telescope/telescope-api/redis')]

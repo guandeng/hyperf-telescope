@@ -15,7 +15,7 @@ use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\GetMapping;
 use Hyperf\View\RenderInterface;
 
-#[Controller]
+#[Controller(server: 'telescope')]
 class ViewController
 {
     #[GetMapping(path: '/telescope/{view}')]
