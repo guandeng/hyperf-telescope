@@ -27,7 +27,7 @@ return [
         'guzzle' => env('TELESCOPE_ENABLE_GUZZLE', false),
     ],
     'timezone' => env('TELESCOPE_TIMEZONE', 'Asia/Shanghai'),
-    'query_slow' => env('TELESCOPE_QUERY_SLOW', 50),
+    'query_slow' => (int) env('TELESCOPE_QUERY_SLOW', 50),
     'database' => [
         'connection' => env('TELESCOPE_DB_CONNECTION', 'default'),
     ],
