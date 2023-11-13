@@ -28,6 +28,7 @@ class ConfigProvider
                 Listener\CommandListener::class,
                 Listener\DbQueryListener::class,
                 Listener\ExceptionHandlerListener::class,
+                Listener\SetupTelescopeServerListener::class,
             ],
             'aspects' => [
                 Aspect\GrpcClientAspect::class,
@@ -35,21 +36,6 @@ class ConfigProvider
                 Aspect\LogAspect::class,
                 Aspect\EventAspect::class,
                 Aspect\HttpClientAspect::class,
-            ],
-            'view' => [
-                'engine' => TemplateEngine::class,
-                'mode' => \Hyperf\View\Mode::SYNC,
-                'config' => [
-                    'view_path' => BASE_PATH . '/vendor/guandeng/hyperf-telescope/storage/view/',
-                    'cache_path' => BASE_PATH . '/runtime/view/',
-                ],
-            ],
-            'server' => [
-                'settings' => [
-                    // 静态资源
-                    'document_root' => BASE_PATH . '/vendor/guandeng/hyperf-telescope/public',
-                    'enable_static_handler' => true,
-                ],
             ],
             'annotations' => [
                 'scan' => [

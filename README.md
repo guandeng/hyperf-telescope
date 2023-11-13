@@ -72,11 +72,13 @@ TELESCOPE_ENABLE_EXCEPTION=true
 TELESCOPE_ENABLE_JOB=true
 TELESCOPE_ENABLE_DB=true
 TELESCOPE_ENABLE_GUZZLE=true
+
+TELESCOPE_SERVER_ENABLE=true
 ```
 
 ## 访问地址
 
-`http://127.0.0.1:9501/telescope/requests`
+`http://127.0.0.1:9509/telescope/requests`
 
 <img src="./requests.jpg">
 <img src="./grpc.jpg">
